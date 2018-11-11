@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace RegionOrebroLan
+﻿namespace RegionOrebroLan
 {
 	public interface IUriBuilderFactory
 	{
@@ -9,7 +7,6 @@ namespace RegionOrebroLan
 		IUriBuilder Create();
 		IUriBuilder Create(string uniformResourceIdentifier);
 		IUriBuilder Create(IUri uri);
-		IUriBuilder Create(Uri uri);
 
 		#endregion
 	}

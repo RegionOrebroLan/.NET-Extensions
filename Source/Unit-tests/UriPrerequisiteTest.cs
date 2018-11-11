@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace RegionOrebroLan.UnitTests
@@ -23,6 +24,120 @@ namespace RegionOrebroLan.UnitTests
 			// ReSharper disable UnusedVariable
 			var absolutePath = relativeUri.AbsolutePath;
 			// ReSharper restore UnusedVariable
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(UriFormatException))]
+		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsABackSlashAndTheUriKindParameterIsAbsolute_ShouldThrowAnUriFormatException()
+		{
+			// ReSharper disable ObjectCreationAsStatement
+			new Uri(@"\", UriKind.Absolute);
+			// ReSharper restore ObjectCreationAsStatement
+		}
+
+		[TestMethod]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsABackSlashAndTheUriKindParameterIsRelative_ShouldResultInARelativeUriWithTheStringRepresentaionOfABackSlash()
+		{
+			var uri = new Uri(@"\", UriKind.Relative);
+			Assert.IsFalse(uri.IsAbsoluteUri);
+			Assert.AreEqual(@"\", uri.OriginalString);
+			Assert.AreEqual(@"\", uri.ToString());
+		}
+
+		[TestMethod]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsABackSlashAndTheUriKindParameterIsRelativeOrAbsolute_ShouldResultInARelativeUriWithTheStringRepresentaionOfABackSlash()
+		{
+			var uri = new Uri(@"\", UriKind.RelativeOrAbsolute);
+			Assert.IsFalse(uri.IsAbsoluteUri);
+			Assert.AreEqual(@"\", uri.OriginalString);
+			Assert.AreEqual(@"\", uri.ToString());
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(UriFormatException))]
+		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsAnEmptyStringAndTheUriKindParameterIsAbsolute_ShouldThrowAnUriFormatException()
+		{
+			// ReSharper disable ObjectCreationAsStatement
+			new Uri(string.Empty, UriKind.Absolute);
+			// ReSharper restore ObjectCreationAsStatement
+		}
+
+		[TestMethod]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsAnEmptyStringAndTheUriKindParameterIsRelative_ShouldResultInARelativeUriWithTheStringRepresentaionOfAnEmptyString()
+		{
+			var uri = new Uri(string.Empty, UriKind.Relative);
+			Assert.IsFalse(uri.IsAbsoluteUri);
+			Assert.AreEqual(string.Empty, uri.OriginalString);
+			Assert.AreEqual(string.Empty, uri.ToString());
+		}
+
+		[TestMethod]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsAnEmptyStringAndTheUriKindParameterIsRelativeOrAbsolute_ShouldResultInARelativeUriWithTheStringRepresentaionOfAnEmptyString()
+		{
+			var uri = new Uri(string.Empty, UriKind.RelativeOrAbsolute);
+			Assert.IsFalse(uri.IsAbsoluteUri);
+			Assert.AreEqual(string.Empty, uri.OriginalString);
+			Assert.AreEqual(string.Empty, uri.ToString());
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(UriFormatException))]
+		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsASlashAndTheUriKindParameterIsAbsolute_ShouldThrowAnUriFormatException()
+		{
+			// ReSharper disable ObjectCreationAsStatement
+			new Uri("/", UriKind.Absolute);
+			// ReSharper restore ObjectCreationAsStatement
+		}
+
+		[TestMethod]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsASlashAndTheUriKindParameterIsRelative_ShouldResultInARelativeUriWithTheStringRepresentaionOfASlash()
+		{
+			var uri = new Uri("/", UriKind.Relative);
+			Assert.IsFalse(uri.IsAbsoluteUri);
+			Assert.AreEqual("/", uri.OriginalString);
+			Assert.AreEqual("/", uri.ToString());
+		}
+
+		[TestMethod]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsASlashAndTheUriKindParameterIsRelativeOrAbsolute_ShouldResultInARelativeUriWithTheStringRepresentaionOfASlash()
+		{
+			var uri = new Uri("/", UriKind.RelativeOrAbsolute);
+			Assert.IsFalse(uri.IsAbsoluteUri);
+			Assert.AreEqual("/", uri.OriginalString);
+			Assert.AreEqual("/", uri.ToString());
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentNullException))]
+		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsNullAndTheUriKindParameterIsAbsolute_ShouldThrowAnArgumentNullException()
+		{
+			// ReSharper disable ObjectCreationAsStatement
+			new Uri(null, UriKind.Absolute);
+			// ReSharper restore ObjectCreationAsStatement
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentNullException))]
+		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsNullAndTheUriKindParameterIsRelative_ShouldThrowAnArgumentNullException()
+		{
+			// ReSharper disable ObjectCreationAsStatement
+			new Uri(null, UriKind.Relative);
+			// ReSharper restore ObjectCreationAsStatement
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentNullException))]
+		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
+		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsNullAndTheUriKindParameterIsRelativeOrAbsolute_ShouldThrowAnArgumentNullException()
+		{
+			// ReSharper disable ObjectCreationAsStatement
+			new Uri(null, UriKind.RelativeOrAbsolute);
+			// ReSharper restore ObjectCreationAsStatement
 		}
 
 		[TestMethod]

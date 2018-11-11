@@ -1,5 +1,4 @@
 ﻿using System;
-using RegionOrebroLan.Abstractions;
 using RegionOrebroLan.ServiceLocation;
 
 namespace RegionOrebroLan
@@ -11,7 +10,7 @@ namespace RegionOrebroLan
 
 		public virtual IUriBuilder Create()
 		{
-			return this.Create(new UriBuilder());
+			return new UriBuilderWrapper();
 		}
 
 		public virtual IUriBuilder Create(string uniformResourceIdentifier)
@@ -19,7 +18,7 @@ namespace RegionOrebroLan
 			if(uniformResourceIdentifier == null)
 				throw new ArgumentNullException(nameof(uniformResourceIdentifier));
 
-			return this.Create(new Uri(uniformResourceIdentifier, UriKind.RelativeOrAbsolute));
+			return new UriBuilderWrapper(uniformResourceIdentifier);
 		}
 
 		public virtual IUriBuilder Create(IUri uri)
@@ -27,22 +26,7 @@ namespace RegionOrebroLan
 			if(uri == null)
 				throw new ArgumentNullException(nameof(uri));
 
-			var concreteUri = (uri as IWrapper)?.WrappedInstance as Uri;
-
-			return concreteUri == null ? this.Create(uri.OriginalString) : this.Create(concreteUri);
-		}
-
-		public virtual IUriBuilder Create(Uri uri)
-		{
-			if(uri == null)
-				throw new ArgumentNullException(nameof(uri));
-
-			return this.Create(new UriBuilder(uri));
-		}
-
-		protected internal virtual IUriBuilder Create(UriBuilder uriBuilder)
-		{
-			return new UriBuilderWrapper(uriBuilder);
+			return new UriBuilderWrapper(uri);
 		}
 
 		#endregion
