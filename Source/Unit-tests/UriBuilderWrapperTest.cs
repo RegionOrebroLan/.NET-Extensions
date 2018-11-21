@@ -9,6 +9,13 @@ namespace RegionOrebroLan.UnitTests
 		#region Methods
 
 		[TestMethod]
+		public void Constructor_WithStringParameter_IfTheUniformResourceIdentifierContainsQueryAndFragment_ShouldCreateAnUriBuilderWrapperThatReturnsAnUriWithoutDoubleQuestionMarksAndWithoutDoubleHashSigns()
+		{
+			const string uniformResourceIdentifier = "http://localhost/?Key=Value#Test";
+			Assert.AreEqual(uniformResourceIdentifier, new UriBuilderWrapper(uniformResourceIdentifier).Uri.ToString());
+		}
+
+		[TestMethod]
 		public void Host_Set_IfTheValueParameterIsNotNull_ShouldMakeItAbsolute()
 		{
 			var uriWrapper = new UriBuilderWrapper();
@@ -25,6 +32,12 @@ namespace RegionOrebroLan.UnitTests
 
 			Assert.IsTrue(uriWrapper.IsAbsolute);
 			Assert.IsTrue(uriWrapper.Uri.IsAbsolute);
+		}
+
+		[TestMethod]
+		public void IsDotNetFrameworkContext_ShouldReturnFalse()
+		{
+			Assert.IsFalse(new UriBuilderWrapper().IsDotNetFrameworkContext);
 		}
 
 		[TestMethod]
@@ -134,6 +147,28 @@ namespace RegionOrebroLan.UnitTests
 
 			Assert.IsTrue(uriWrapper.IsAbsolute);
 			Assert.IsTrue(uriWrapper.Uri.IsAbsolute);
+		}
+
+		[TestMethod]
+		public void Uri_Get_IfTheFragmentHasBeenSetWithALeadingHashSign_ShouldReturnAnUriWithoutDoubleLeadingHashSigns()
+		{
+			var uriBuilderWrapper = new UriBuilderWrapper
+			{
+				Fragment = "#Test"
+			};
+
+			Assert.AreEqual("/#Test", uriBuilderWrapper.Uri.ToString());
+		}
+
+		[TestMethod]
+		public void Uri_Get_IfTheQueryHasBeenSetWithALeadingQuestionMark_ShouldReturnAnUriWithoutDoubleLeadingQuestionMarks()
+		{
+			var uriBuilderWrapper = new UriBuilderWrapper
+			{
+				Query = "?Key=Value"
+			};
+
+			Assert.AreEqual("/?Key=Value", uriBuilderWrapper.Uri.ToString());
 		}
 
 		[TestMethod]

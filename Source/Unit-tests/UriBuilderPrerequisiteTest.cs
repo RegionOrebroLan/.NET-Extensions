@@ -59,6 +59,24 @@ namespace RegionOrebroLan.UnitTests
 		}
 
 		[TestMethod]
+		public void Fragment_Set_IfTheValueStartsWithAHashSign_ShouldResultInAGetValueOfOneLeadingHashSign()
+		{
+			var uriBuilder = new UriBuilder
+			{
+				Fragment = "#"
+			};
+
+			Assert.AreEqual("#", uriBuilder.Fragment);
+
+			uriBuilder = new UriBuilder
+			{
+				Fragment = "#Test"
+			};
+
+			Assert.AreEqual("#Test", uriBuilder.Fragment);
+		}
+
+		[TestMethod]
 		public void Host_Get_IfTheHostIsSetToAnEmptyString_ShouldReturnAWhiteSpace()
 		{
 			Assert.AreEqual(string.Empty, new UriBuilder {Host = string.Empty}.Host);
@@ -107,6 +125,24 @@ namespace RegionOrebroLan.UnitTests
 		}
 
 		[TestMethod]
+		public void Query_Set_IfTheValueStartsWithAQuestionMark_ShouldResultInAGetValueOfOneLeadingQuestionMark()
+		{
+			var uriBuilder = new UriBuilder
+			{
+				Query = "?"
+			};
+
+			Assert.AreEqual("?", uriBuilder.Query);
+
+			uriBuilder = new UriBuilder
+			{
+				Query = "?Key=Value"
+			};
+
+			Assert.AreEqual("?Key=Value", uriBuilder.Query);
+		}
+
+		[TestMethod]
 		public void Scheme_Get_IfTheSchemeIsSetToAnEmptyString_ShouldReturnAnEmptyString()
 		{
 			Assert.AreEqual(string.Empty, new UriBuilder {Scheme = string.Empty}.Scheme);
@@ -132,6 +168,12 @@ namespace RegionOrebroLan.UnitTests
 			// ReSharper disable ObjectCreationAsStatement
 			new UriBuilder {Scheme = " "};
 			// ReSharper restore ObjectCreationAsStatement
+		}
+
+		[TestMethod]
+		public void Type_Assembly_Name_ShouldReturnSystemDotPrivateDotUri()
+		{
+			Assert.AreEqual("System.Private.Uri", typeof(UriBuilder).Assembly.GetName().Name);
 		}
 
 		[TestMethod]
