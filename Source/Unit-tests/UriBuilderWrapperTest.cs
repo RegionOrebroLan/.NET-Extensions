@@ -150,6 +150,28 @@ namespace RegionOrebroLan.UnitTests
 		}
 
 		[TestMethod]
+		public void Uri_Get_IfConstructedWithAnInitialUriAndTheFragmentHasBeenSet_ShouldReturnAnUriWithTheFragment()
+		{
+			var uriBuilderWrapper = new UriBuilderWrapper("http://localhost/")
+			{
+				Fragment = "#Test"
+			};
+
+			Assert.AreEqual("http://localhost/#Test", uriBuilderWrapper.Uri.ToString());
+		}
+
+		[TestMethod]
+		public void Uri_Get_IfConstructedWithAnInitialUriAndTheQueryHasBeenSet_ShouldReturnAnUriWithTheQuery()
+		{
+			var uriBuilderWrapper = new UriBuilderWrapper("http://localhost/")
+			{
+				Query = "Key=Value"
+			};
+
+			Assert.AreEqual("http://localhost/?Key=Value", uriBuilderWrapper.Uri.ToString());
+		}
+
+		[TestMethod]
 		public void Uri_Get_IfTheFragmentHasBeenSetWithALeadingHashSign_ShouldReturnAnUriWithoutDoubleLeadingHashSigns()
 		{
 			var uriBuilderWrapper = new UriBuilderWrapper

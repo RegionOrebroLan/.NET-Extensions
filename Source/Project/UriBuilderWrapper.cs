@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using RegionOrebroLan.Abstractions;
 using RegionOrebroLan.Extensions;
 
 namespace RegionOrebroLan
 {
-	public class UriBuilderWrapper : Wrapper<UriBuilder>, IUriBuilder
+	public class UriBuilderWrapper : IUriBuilder
 	{
 		#region Fields
 
@@ -27,16 +25,16 @@ namespace RegionOrebroLan
 
 		#region Constructors
 
-		public UriBuilderWrapper() : base(new UriBuilder(), "uriBuilder") { }
+		public UriBuilderWrapper() { }
 
-		public UriBuilderWrapper(string uniformResourceIdentifier) : base(new UriBuilder(), "uriBuilder")
+		public UriBuilderWrapper(string uniformResourceIdentifier)
 		{
 			if(uniformResourceIdentifier == null)
 				throw new ArgumentNullException(nameof(uniformResourceIdentifier));
 
 			try
 			{
-				this.InitialUri = (UriWrapper) new Uri(uniformResourceIdentifier, UriKind.RelativeOrAbsolute);
+				this.Initialize((UriWrapper) new Uri(uniformResourceIdentifier, UriKind.RelativeOrAbsolute));
 			}
 			catch(Exception exception)
 			{
@@ -44,15 +42,9 @@ namespace RegionOrebroLan
 			}
 		}
 
-		public UriBuilderWrapper(IUri uri) : base(new UriBuilder(), "uriBuilder")
+		public UriBuilderWrapper(IUri uri)
 		{
-			this.InitialUri = uri ?? throw new ArgumentNullException(nameof(uri));
-		}
-
-		[Obsolete("This constructor will be removed. The inheritance from Wrapper<UriBuilder> will also be removed. Use the other constructors instead. We need to be able to handle relative uri's and UriBuilder do not support that.")]
-		public UriBuilderWrapper(UriBuilder uriBuilder) : base(uriBuilder, nameof(uriBuilder))
-		{
-			this.InitialUri = (UriWrapper) uriBuilder.Uri;
+			this.Initialize(uri);
 		}
 
 		#endregion
@@ -61,11 +53,7 @@ namespace RegionOrebroLan
 
 		public virtual string Fragment
 		{
-			get
-			{
-				this.InitializeIfNecessary();
-				return this._fragment;
-			}
+			get => this._fragment;
 			set
 			{
 				if(string.Equals(this._fragment, value, StringComparison.Ordinal))
@@ -80,11 +68,7 @@ namespace RegionOrebroLan
 
 		public virtual string Host
 		{
-			get
-			{
-				this.InitializeIfNecessary();
-				return this._host;
-			}
+			get => this._host;
 			set
 			{
 				if(string.Equals(this._host, value, StringComparison.Ordinal))
@@ -94,9 +78,6 @@ namespace RegionOrebroLan
 				this.Modified = true;
 			}
 		}
-
-		protected internal virtual bool Initialized { get; set; }
-		protected internal virtual IUri InitialUri { get; }
 
 		protected internal virtual bool IsAbsolute
 		{
@@ -123,11 +104,7 @@ namespace RegionOrebroLan
 
 		public virtual string Password
 		{
-			get
-			{
-				this.InitializeIfNecessary();
-				return this._password;
-			}
+			get => this._password;
 			set
 			{
 				if(string.Equals(this._password, value, StringComparison.Ordinal))
@@ -140,11 +117,7 @@ namespace RegionOrebroLan
 
 		public virtual string Path
 		{
-			get
-			{
-				this.InitializeIfNecessary();
-				return this._path;
-			}
+			get => this._path;
 			set
 			{
 				if(string.Equals(this._path, value, StringComparison.Ordinal))
@@ -157,11 +130,7 @@ namespace RegionOrebroLan
 
 		public virtual int? Port
 		{
-			get
-			{
-				this.InitializeIfNecessary();
-				return this._port;
-			}
+			get => this._port;
 			set
 			{
 				if(this._port == value)
@@ -180,11 +149,7 @@ namespace RegionOrebroLan
 
 		public virtual string Query
 		{
-			get
-			{
-				this.InitializeIfNecessary();
-				return this._query;
-			}
+			get => this._query;
 			set
 			{
 				if(string.Equals(this._query, value, StringComparison.Ordinal))
@@ -199,11 +164,7 @@ namespace RegionOrebroLan
 
 		public virtual string Scheme
 		{
-			get
-			{
-				this.InitializeIfNecessary();
-				return this._scheme;
-			}
+			get => this._scheme;
 			set
 			{
 				if(string.Equals(this._scheme, value, StringComparison.Ordinal))
@@ -224,8 +185,6 @@ namespace RegionOrebroLan
 		{
 			get
 			{
-				this.InitializeIfNecessary();
-
 				if(this._uri == null || this.Modified)
 					this._uri = new Lazy<IUri>(this.CreateUri);
 
@@ -235,11 +194,7 @@ namespace RegionOrebroLan
 
 		public virtual string UserName
 		{
-			get
-			{
-				this.InitializeIfNecessary();
-				return this._userName;
-			}
+			get => this._userName;
 			set
 			{
 				if(string.Equals(this._userName, value, StringComparison.Ordinal))
@@ -303,54 +258,34 @@ namespace RegionOrebroLan
 			}
 		}
 
-		protected internal virtual void Initialize()
+		protected internal void Initialize(IUri uri)
 		{
-			if(this.Initialized)
-				throw new InvalidOperationException("The uri-builder-wrapper is already initialized.");
+			if(uri == null)
+				throw new ArgumentNullException(nameof(uri));
 
-			if(this.InitialUri == null)
-				return;
+			this._fragment = this.RemoveIfFirst(uri.Fragment, this.HashSign);
+			this._path = uri.Path;
+			this._query = this.RemoveIfFirst(uri.Query, this.QuestionMark);
 
-			this.Fragment = this.RemoveIfFirst(this.InitialUri.Fragment, this.HashSign);
-			this.Path = this.InitialUri.Path;
-			this.Query = this.RemoveIfFirst(this.InitialUri.Query, this.QuestionMark);
-
-			if(this.InitialUri.IsAbsolute)
+			if(uri.IsAbsolute)
 			{
-				this.Host = this.InitialUri.Host;
-				this.Port = this.InitialUri.Port;
-				this.Scheme = this.InitialUri.Scheme;
+				this._host = uri.Host;
+				this._port = uri.Port;
+				this._scheme = uri.Scheme;
 
-				if(!string.IsNullOrEmpty(this.InitialUri.UserInformation))
+				if(!string.IsNullOrEmpty(uri.UserInformation))
 				{
-					var parts = this.InitialUri.UserInformation.Split(':');
+					var parts = uri.UserInformation.Split(':');
 
 					if(parts.Length > 0)
 					{
-						this.UserName = parts[0];
+						this._userName = parts[0];
 
 						if(parts.Length > 1)
-							this.Password = parts[1];
+							this._password = parts[1];
 					}
 				}
 			}
-
-			this.Modified = false;
-
-			this.Initialized = true;
-		}
-
-		[Obsolete("This method will be removed. Initialization handled differently. Initialization is no longer called from the constructor. The initialization is called from the \"getters\" only if necessary.")]
-		[SuppressMessage("Usage", "CA1801:Review unused parameters")]
-		[SuppressMessage("Performance", "CA1822:Mark members as static")]
-		protected internal void Initialize(IUri uri) { }
-
-		protected internal virtual void InitializeIfNecessary()
-		{
-			if(this.Initialized)
-				return;
-
-			this.Initialize();
 		}
 
 		protected internal virtual string RemoveIfFirst(string value, char characterToRemove)
