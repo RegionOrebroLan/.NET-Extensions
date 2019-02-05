@@ -7,6 +7,7 @@ namespace RegionOrebroLan
 		#region Properties
 
 		DateTime Now { get; }
+		DateTime UtcNow { get; }
 
 		#endregion
 	}
