@@ -24,7 +24,7 @@ namespace RegionOrebroLan
 		public UriWrapper(Uri uri) : base(uri, nameof(uri)) { }
 
 		[SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-		protected UriWrapper(SerializationInfo info, StreamingContext context) : this((Uri) info.GetValue(_wrappedInstanceSerializationParameterName, typeof(Uri))) { }
+		protected UriWrapper(SerializationInfo info, StreamingContext context) : this((Uri) ValidateSerializationInfo(info).GetValue(_wrappedInstanceSerializationParameterName, typeof(Uri))) { }
 
 		#endregion
 
@@ -165,6 +165,14 @@ namespace RegionOrebroLan
 		public static UriWrapper ToUriWrapper(Uri uri)
 		{
 			return uri;
+		}
+
+		private static SerializationInfo ValidateSerializationInfo(SerializationInfo info)
+		{
+			if(info == null)
+				throw new ArgumentNullException(nameof(info));
+
+			return info;
 		}
 
 		#endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -20,6 +21,7 @@ namespace RegionOrebroLan.ServiceLocation.Extensions
 			return serviceConfigurationScanner.Scan(new[] {assembly});
 		}
 
+		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		public static IEnumerable<IServiceConfigurationMapping> Scan(this IServiceConfigurationScanner serviceConfigurationScanner, IEnumerable<Assembly> assemblies)
 		{
 			if(serviceConfigurationScanner == null)

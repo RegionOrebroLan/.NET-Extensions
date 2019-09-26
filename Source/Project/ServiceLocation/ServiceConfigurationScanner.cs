@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RegionOrebroLan.ServiceLocation
@@ -8,6 +9,7 @@ namespace RegionOrebroLan.ServiceLocation
 	{
 		#region Methods
 
+		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		public virtual IEnumerable<IServiceConfigurationMapping> Scan(IEnumerable<Type> types)
 		{
 			if(types == null)
