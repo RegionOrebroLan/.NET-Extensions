@@ -60,13 +60,72 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic.Extensions
 		}
 
 		[TestMethod]
-		public void Descendants_Test()
+		public void Descendants_Test_1()
+		{
+			var root = new TreeNode<string>();
+
+			this.PopulateTree(1, 0, root, 1);
+
+			// 1 = 1
+
+			Assert.AreEqual(1, root.Descendants().Count());
+		}
+
+		[TestMethod]
+		public void Descendants_Test_2()
+		{
+			var root = new TreeNode<string>();
+
+			this.PopulateTree(2, 0, root, 2);
+
+			// 2 + 2*2 => 2 + 4 = 6
+
+			Assert.AreEqual(6, root.Descendants().Count());
+
+			Assert.AreEqual("1", root.Descendants().ElementAt(0).Value);
+			Assert.AreEqual("1.1", root.Descendants().ElementAt(1).Value);
+			Assert.AreEqual("1.2", root.Descendants().ElementAt(2).Value);
+			Assert.AreEqual("2", root.Descendants().ElementAt(3).Value);
+			Assert.AreEqual("2.1", root.Descendants().ElementAt(4).Value);
+			Assert.AreEqual("2.2", root.Descendants().ElementAt(5).Value);
+		}
+
+		[TestMethod]
+		public void Descendants_Test_3()
+		{
+			var root = new TreeNode<string>();
+
+			this.PopulateTree(3, 0, root, 3);
+
+			// 3 + 3*3 + 3*3*3 => 3 + 9 + 27 = 39
+
+			Assert.AreEqual(39, root.Descendants().Count());
+		}
+
+		[TestMethod]
+		public void Descendants_Test_4()
+		{
+			var root = new TreeNode<string>();
+
+			this.PopulateTree(4, 0, root, 4);
+
+			// 4 + 4*4 + 4*4*4 + 4*4*4*4 => 4 + 16 + 64 + 256 = 340
+
+			Assert.AreEqual(340, root.Descendants().Count());
+		}
+
+		[TestMethod]
+		public void Descendants_Test_5()
 		{
 			var root = new TreeNode<string>();
 
 			this.PopulateTree(5, 0, root, 5);
 
 			root.Value = "Root";
+
+			// To get the number of descendants for depth = 5 and width = 5: 5 + 5*5 + 5*5*5 + 5*5*5*5 + 5*5*5*5*5 => 5 + 25 + 125 + 625 + 3125 = 3905
+
+			Assert.AreEqual(3905, root.Descendants().Count());
 
 			Assert.AreEqual("1", root.Descendants().ElementAt(0).Value);
 			Assert.AreEqual("1.1", root.Descendants().ElementAt(1).Value);
@@ -94,8 +153,6 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic.Extensions
 			Assert.AreEqual(6, distinctCharacters.Count());
 
 			Assert.AreEqual(root.Descendants().Count(), root.Descendants().Distinct().Count());
-
-			Assert.AreEqual(3905, root.Descendants().Count());
 		}
 
 		[TestMethod]
