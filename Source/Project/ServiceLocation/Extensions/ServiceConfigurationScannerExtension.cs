@@ -43,9 +43,6 @@ namespace RegionOrebroLan.ServiceLocation.Extensions
 			if(serviceConfigurationScanner == null)
 				throw new ArgumentNullException(nameof(serviceConfigurationScanner));
 
-			if(assemblies == null)
-				throw new ArgumentNullException(nameof(assemblies));
-
 			return serviceConfigurationScanner.Scan((IEnumerable<Assembly>) assemblies);
 		}
 
@@ -64,9 +61,6 @@ namespace RegionOrebroLan.ServiceLocation.Extensions
 		{
 			if(serviceConfigurationScanner == null)
 				throw new ArgumentNullException(nameof(serviceConfigurationScanner));
-
-			if(types == null)
-				throw new ArgumentNullException(nameof(types));
 
 			return serviceConfigurationScanner.Scan(types);
 		}
