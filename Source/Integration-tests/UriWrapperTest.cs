@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,6 +13,8 @@ namespace RegionOrebroLan.IntegrationTests
 		#region Methods
 
 		[TestMethod]
+		[SuppressMessage("Security", "CA2300:Do not use insecure deserializer BinaryFormatter")]
+		[SuppressMessage("Security", "CA2301:Do not use insecure deserializer BinaryFormatter")]
 		public void IsDeserializable()
 		{
 			var uniformResourceIdentifier = "http://localhost/Directory/Sub-Directory/File.txt?Key=Value#Fragment";
