@@ -8,12 +8,8 @@
 		<AssemblyName>RegionOrebroLan</AssemblyName>
 		<AssemblyOriginatorKeyFile>$(SolutionDir).Global\Signing\StrongName.snk</AssemblyOriginatorKeyFile>
 		<AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
-		<CodeAnalysisRuleSet>CodeAnalysis\Rules.ruleset</CodeAnalysisRuleSet>
-		<DelaySign>false</DelaySign>
 		<Description>Additions and extensions for .NET.</Description>
 		<FileVersion>$(VersionPrefix).0</FileVersion>
-		<RootNamespace>$(AssemblyName)</RootNamespace>
-		<SignAssembly>true</SignAssembly>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Version>$(VersionPrefix)</Version>
 		<Version Condition="$(VersionPrereleaseName) != ''">$(Version)-$(VersionPrereleaseName)</Version>
