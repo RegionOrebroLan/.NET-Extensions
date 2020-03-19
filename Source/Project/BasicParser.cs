@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RegionOrebroLan
 {
@@ -23,7 +23,7 @@ namespace RegionOrebroLan
 			}
 			catch
 			{
-				result = default(T);
+				result = default;
 				return false;
 			}
 		}

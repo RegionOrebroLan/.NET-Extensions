@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RegionOrebroLan.Collections.Generic;
@@ -150,7 +150,7 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic.Extensions
 
 			var distinctCharacters = root.Descendants().SelectMany(node => node.Value.ToCharArray()).Distinct().OrderBy(character => character).ToArray();
 
-			Assert.AreEqual(6, distinctCharacters.Count());
+			Assert.AreEqual(6, distinctCharacters.Length);
 
 			Assert.AreEqual(root.Descendants().Count(), root.Descendants().Distinct().Count());
 		}
