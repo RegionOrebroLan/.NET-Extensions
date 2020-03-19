@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Global", ".Global", "{11402557-CA24-4A83-BE7F-E88F242BAA07}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{43D62E8E-B7D9-4020-A5CA-3D94D999CD5A}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeAnalysis", "CodeAnalysis", "{E2B140BE-56E4-4D82-A011-E1D64F936198}"
 	ProjectSection(SolutionItems) = preProject
@@ -73,6 +79,7 @@ Global
 		{2BE230D5-928C-46F6-95B5-CEF06CE0D0BE} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
 		{E69917BB-D44E-418E-AE1E-8C62EE842E58} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
 		{169D8A5D-6205-40F4-86B6-054AF7BEE7B3} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
+		{43D62E8E-B7D9-4020-A5CA-3D94D999CD5A} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D7A5EBB-83F7-4E96-9BFA-4FC6B4C3856E}
