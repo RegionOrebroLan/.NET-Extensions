@@ -2,7 +2,7 @@
 	<Import Project="..\Test.Build.props" />
 	<Import Project="Build\Build.props" />
 	<PropertyGroup>
-		<TargetFramework>netcoreapp2.0</TargetFramework>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
 	</PropertyGroup>
 	<Import Project="..\Test.Build.targets" />
 	<Import Project="Build\Build.targets" />
