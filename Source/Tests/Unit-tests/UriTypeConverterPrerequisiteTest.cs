@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.ComponentModel.Design.Serialization;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -28,18 +29,17 @@ namespace RegionOrebroLan.UnitTests
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void CanConvertFrom_IfTheSourceTypeParameterIsNull_ShouldThrowAnArgumentNullException()
+		public void CanConvertFrom_IfTheSourceTypeParameterIsNull_ShouldReturnFalse()
 		{
 			// ReSharper disable AssignNullToNotNullAttribute
-			this.UriTypeConverter.CanConvertFrom(null, null);
+			Assert.IsFalse(this.UriTypeConverter.CanConvertFrom(null, null));
 			// ReSharper restore AssignNullToNotNullAttribute
 		}
 
 		[TestMethod]
-		public void CanConvertFrom_IfTheSourceTypeParameterIsOfTypeInstanceDescriptor_ShouldReturnFalse()
+		public void CanConvertFrom_IfTheSourceTypeParameterIsOfTypeInstanceDescriptor_ShouldReturnTrue()
 		{
-			Assert.IsFalse(this.UriTypeConverter.CanConvertFrom(null, typeof(InstanceDescriptor)));
+			Assert.IsTrue(this.UriTypeConverter.CanConvertFrom(null, typeof(InstanceDescriptor)));
 		}
 
 		[TestMethod]
@@ -74,9 +74,9 @@ namespace RegionOrebroLan.UnitTests
 		}
 
 		[TestMethod]
-		public void CanConvertTo_IfTheDestinationTypeParameterIsOfTypeInstanceDescriptor_ShouldReturnFalse()
+		public void CanConvertTo_IfTheDestinationTypeParameterIsOfTypeInstanceDescriptor_ShouldReturnTrue()
 		{
-			Assert.IsFalse(this.UriTypeConverter.CanConvertTo(null, typeof(InstanceDescriptor)));
+			Assert.IsTrue(this.UriTypeConverter.CanConvertTo(null, typeof(InstanceDescriptor)));
 		}
 
 		[TestMethod]
@@ -92,10 +92,15 @@ namespace RegionOrebroLan.UnitTests
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(NotSupportedException))]
-		public void ConvertTo_IfTheDestinationTypeParameterIsOfTypeInstanceDescriptorAndTheValueParameterIsAnUri_ShouldThrowANotSupportedException()
+		public void ConvertTo_IfTheDestinationTypeParameterIsOfTypeInstanceDescriptorAndTheValueParameterIsAnUri_ShouldReturnAnInstanceDescriptor()
 		{
-			this.UriTypeConverter.ConvertTo(null, null, new Uri("http://localhost"), typeof(InstanceDescriptor));
+			var instanceDescriptor = this.UriTypeConverter.ConvertTo(null, null, new Uri("http://localhost"), typeof(InstanceDescriptor)) as InstanceDescriptor;
+
+			Assert.IsNotNull(instanceDescriptor);
+			Assert.AreEqual(2, instanceDescriptor.Arguments.Count);
+			Assert.AreEqual("http://localhost", instanceDescriptor.Arguments.Cast<object>().ElementAt(0));
+			Assert.AreEqual(UriKind.Absolute, instanceDescriptor.Arguments.Cast<object>().ElementAt(1));
+			Assert.IsTrue(instanceDescriptor.IsComplete);
 		}
 
 		[TestMethod]
