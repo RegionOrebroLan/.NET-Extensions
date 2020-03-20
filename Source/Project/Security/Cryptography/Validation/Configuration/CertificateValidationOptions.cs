@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
-namespace RegionOrebroLan.Security.Cryptography.Validation
+namespace RegionOrebroLan.Security.Cryptography.Validation.Configuration
 {
 	public class CertificateValidationOptions : ICertificateValidationOptions
 	{

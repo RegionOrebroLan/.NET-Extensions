@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using RegionOrebroLan.Abstractions;
 using RegionOrebroLan.Collections.Generic.Extensions;
+using RegionOrebroLan.Security.Cryptography.Validation.Configuration;
 
 namespace RegionOrebroLan.Security.Cryptography.Validation
 {

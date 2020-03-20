@@ -1,3 +1,5 @@
+using RegionOrebroLan.Security.Cryptography.Validation.Configuration;
+
 namespace RegionOrebroLan.Security.Cryptography.Validation
 {
 	public interface ICertificateValidator
