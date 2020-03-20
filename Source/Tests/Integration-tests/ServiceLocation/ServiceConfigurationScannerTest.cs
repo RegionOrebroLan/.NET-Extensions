@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RegionOrebroLan.ServiceLocation;
 
@@ -9,7 +9,7 @@ namespace RegionOrebroLan.IntegrationTests.ServiceLocation
 	{
 		#region Fields
 
-		public const int ExpectedNumberOfMappingsInTheAssembly = 3;
+		public const int ExpectedNumberOfMappingsInTheAssembly = 6;
 
 		#endregion
 
