@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RegionOrebroLan.Collections.Generic;
@@ -115,6 +116,7 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic.Extensions
 		}
 
 		[TestMethod]
+		[SuppressMessage("Globalization", "CA1307:Specify StringComparison")]
 		public void Descendants_Test_5()
 		{
 			var root = new TreeNode<string>();
