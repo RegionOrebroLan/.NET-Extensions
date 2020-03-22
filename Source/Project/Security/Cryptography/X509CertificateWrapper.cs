@@ -44,5 +44,14 @@ namespace RegionOrebroLan.Security.Cryptography
 		public virtual string Subject => this.WrappedInstance.Subject;
 
 		#endregion
+
+		#region Methods
+
+		public virtual void Dispose()
+		{
+			this.WrappedInstance.Dispose();
+		}
+
+		#endregion
 	}
 }

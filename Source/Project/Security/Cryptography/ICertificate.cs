@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RegionOrebroLan.Security.Cryptography
 {
-	public interface ICertificate
+	public interface ICertificate : IDisposable
 	{
 		#region Properties
 
