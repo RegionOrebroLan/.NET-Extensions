@@ -4,7 +4,9 @@ using RegionOrebroLan.ServiceLocation;
 
 namespace RegionOrebroLan.Security.Cryptography
 {
+#pragma warning disable CS0618 // Type or member is obsolete
 	[ServiceConfiguration(InstanceMode = InstanceMode.Singleton, ServiceType = typeof(ICertificateResolver))]
+#pragma warning restore CS0618 // Type or member is obsolete
 	public class CertificateResolver : ICertificateResolver
 	{
 		#region Constructors

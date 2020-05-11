@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RegionOrebroLan.ServiceLocation
 {
+	[Obsolete("Start using RegionOrebroLan.DependencyInjection.ServiceConfigurationScanner instead, https://www.nuget.org/packages/RegionOrebroLan.DependencyInjection/. This will later be removed.")]
 	public class ServiceConfigurationScanner : IServiceConfigurationScanner
 	{
 		#region Methods

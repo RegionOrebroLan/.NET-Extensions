@@ -18,7 +18,9 @@ namespace RegionOrebroLan.IntegrationTests.ServiceLocation
 		[TestMethod]
 		public void Scan_ShouldWorkProperly()
 		{
+#pragma warning disable CS0618 // Type or member is obsolete
 			var mappings = new ServiceConfigurationScanner().Scan(typeof(AppDomainWrapper).Assembly.GetTypes());
+#pragma warning restore CS0618 // Type or member is obsolete
 
 			Assert.AreEqual(ExpectedNumberOfMappingsInTheAssembly, mappings.Count());
 		}

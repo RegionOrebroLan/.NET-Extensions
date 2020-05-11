@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -6,6 +6,7 @@ using System.Reflection;
 
 namespace RegionOrebroLan.ServiceLocation.Extensions
 {
+	[Obsolete("Start using RegionOrebroLan.DependencyInjection.Extensions.ServiceConfigurationScannerExtension instead, https://www.nuget.org/packages/RegionOrebroLan.DependencyInjection/. This will later be removed.")]
 	public static class ServiceConfigurationScannerExtension
 	{
 		#region Methods

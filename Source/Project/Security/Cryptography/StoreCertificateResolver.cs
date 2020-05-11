@@ -8,7 +8,9 @@ using RegionOrebroLan.ServiceLocation;
 
 namespace RegionOrebroLan.Security.Cryptography
 {
+#pragma warning disable CS0618 // Type or member is obsolete
 	[ServiceConfiguration(InstanceMode = InstanceMode.Singleton)]
+#pragma warning restore CS0618 // Type or member is obsolete
 	public class StoreCertificateResolver
 	{
 		#region Fields

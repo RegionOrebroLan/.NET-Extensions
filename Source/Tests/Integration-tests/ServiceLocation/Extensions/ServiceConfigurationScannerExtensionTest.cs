@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,13 +12,17 @@ namespace RegionOrebroLan.IntegrationTests.ServiceLocation.Extensions
 	{
 		#region Fields
 
+#pragma warning disable CS0618 // Type or member is obsolete
 		private static readonly IServiceConfigurationScanner _serviceConfigurationScanner = new ServiceConfigurationScanner();
+#pragma warning restore CS0618 // Type or member is obsolete
 
 		#endregion
 
 		#region Properties
 
+#pragma warning disable CS0618 // Type or member is obsolete
 		protected internal virtual IServiceConfigurationScanner ServiceConfigurationScanner => _serviceConfigurationScanner;
+#pragma warning restore CS0618 // Type or member is obsolete
 
 		#endregion
 

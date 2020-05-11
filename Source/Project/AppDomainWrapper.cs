@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using RegionOrebroLan.Abstractions;
 using RegionOrebroLan.ServiceLocation;
 
 namespace RegionOrebroLan
 {
+#pragma warning disable CS0618 // Type or member is obsolete
 	[ServiceConfiguration(InstanceMode = InstanceMode.Singleton, ServiceType = typeof(IApplicationDomain))]
+#pragma warning restore CS0618 // Type or member is obsolete
 	public class AppDomainWrapper : Wrapper<AppDomain>, IApplicationDomain
 	{
 		#region Constructors
