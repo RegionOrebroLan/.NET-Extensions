@@ -1,11 +1,14 @@
 using System;
-using RegionOrebroLan.ServiceLocation;
+using RegionOrebroLan.DependencyInjection;
+using ObsoleteInstanceMode = RegionOrebroLan.ServiceLocation.InstanceMode;
+using ObsoleteServiceConfigurationAttribute = RegionOrebroLan.ServiceLocation.ServiceConfigurationAttribute;
 
 namespace RegionOrebroLan
 {
 #pragma warning disable CS0618 // Type or member is obsolete
-	[ServiceConfiguration(InstanceMode = InstanceMode.Singleton, ServiceType = typeof(IUriBuilderFactory))]
+	[ObsoleteServiceConfiguration(InstanceMode = ObsoleteInstanceMode.Singleton, ServiceType = typeof(IUriBuilderFactory))]
 #pragma warning restore CS0618 // Type or member is obsolete
+	[ServiceConfiguration(ServiceType = typeof(IUriBuilderFactory))]
 	public class UriBuilderFactory : IUriBuilderFactory
 	{
 		#region Methods

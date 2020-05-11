@@ -1,11 +1,14 @@
 using System;
-using RegionOrebroLan.ServiceLocation;
+using RegionOrebroLan.DependencyInjection;
+using ObsoleteInstanceMode = RegionOrebroLan.ServiceLocation.InstanceMode;
+using ObsoleteServiceConfigurationAttribute = RegionOrebroLan.ServiceLocation.ServiceConfigurationAttribute;
 
 namespace RegionOrebroLan
 {
 #pragma warning disable CS0618 // Type or member is obsolete
-	[ServiceConfiguration(InstanceMode = InstanceMode.Singleton, ServiceType = typeof(IDateTimeContext))]
+	[ObsoleteServiceConfiguration(InstanceMode = ObsoleteInstanceMode.Singleton, ServiceType = typeof(IDateTimeContext))]
 #pragma warning restore CS0618 // Type or member is obsolete
+	[ServiceConfiguration(ServiceType = typeof(IDateTimeContext))]
 	public class DateTimeContext : IDateTimeContext
 	{
 		#region Properties

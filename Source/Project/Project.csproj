@@ -2,6 +2,7 @@
 	<Import Project="Build\Build.props" />
 	<ItemGroup>
 		<PackageReference Include="RegionOrebroLan.Abstractions" Version="1.0.0" />
+		<PackageReference Include="RegionOrebroLan.DependencyInjection" Version="0.0.0-alpha" />
 	</ItemGroup>
 	<Import Project="Build\Build.targets" />
 </Project>

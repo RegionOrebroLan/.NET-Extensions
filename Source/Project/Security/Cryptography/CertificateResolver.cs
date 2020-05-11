@@ -1,12 +1,15 @@
 using System;
+using RegionOrebroLan.DependencyInjection;
 using RegionOrebroLan.Security.Cryptography.Configuration;
-using RegionOrebroLan.ServiceLocation;
+using ObsoleteInstanceMode = RegionOrebroLan.ServiceLocation.InstanceMode;
+using ObsoleteServiceConfigurationAttribute = RegionOrebroLan.ServiceLocation.ServiceConfigurationAttribute;
 
 namespace RegionOrebroLan.Security.Cryptography
 {
 #pragma warning disable CS0618 // Type or member is obsolete
-	[ServiceConfiguration(InstanceMode = InstanceMode.Singleton, ServiceType = typeof(ICertificateResolver))]
+	[ObsoleteServiceConfiguration(InstanceMode = ObsoleteInstanceMode.Singleton, ServiceType = typeof(ICertificateResolver))]
 #pragma warning restore CS0618 // Type or member is obsolete
+	[ServiceConfiguration(ServiceType = typeof(ICertificateResolver))]
 	public class CertificateResolver : ICertificateResolver
 	{
 		#region Constructors

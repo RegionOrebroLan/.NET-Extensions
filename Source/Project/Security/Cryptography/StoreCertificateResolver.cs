@@ -4,13 +4,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using RegionOrebroLan.ServiceLocation;
+using RegionOrebroLan.DependencyInjection;
+using ObsoleteInstanceMode = RegionOrebroLan.ServiceLocation.InstanceMode;
+using ObsoleteServiceConfigurationAttribute = RegionOrebroLan.ServiceLocation.ServiceConfigurationAttribute;
 
 namespace RegionOrebroLan.Security.Cryptography
 {
 #pragma warning disable CS0618 // Type or member is obsolete
-	[ServiceConfiguration(InstanceMode = InstanceMode.Singleton)]
+	[ObsoleteServiceConfiguration(InstanceMode = ObsoleteInstanceMode.Singleton)]
 #pragma warning restore CS0618 // Type or member is obsolete
+	[ServiceConfiguration]
 	public class StoreCertificateResolver
 	{
 		#region Fields
