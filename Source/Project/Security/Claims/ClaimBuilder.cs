@@ -1,0 +1,89 @@
+using System.Collections.Generic;
+using System.Security.Claims;
+
+namespace RegionOrebroLan.Security.Claims
+{
+	public class ClaimBuilder : IClaimBuilder
+	{
+		#region Fields
+
+		private string _issuer;
+		private string _originalIssuer;
+		private readonly IDictionary<string, string> _properties = new Dictionary<string, string>();
+		private string _type;
+		private string _value;
+		private string _valueType;
+
+		#endregion
+
+		#region Constructors
+
+		public ClaimBuilder() { }
+
+		public ClaimBuilder(Claim claim)
+		{
+			claim = claim?.Clone();
+
+			this._issuer = claim?.Issuer;
+			this._originalIssuer = claim?.OriginalIssuer;
+			this._type = claim?.Type;
+			this._value = claim?.Value;
+			this._valueType = claim?.ValueType;
+
+			if(claim?.Properties == null)
+				return;
+
+			foreach(var property in claim.Properties)
+			{
+				this._properties.Add(property.Key, property.Value);
+			}
+		}
+
+		#endregion
+
+		#region Properties
+
+		public virtual string Issuer
+		{
+			get => this._issuer;
+			set => this._issuer = value;
+		}
+
+		public virtual string OriginalIssuer
+		{
+			get => this._originalIssuer;
+			set => this._originalIssuer = value;
+		}
+
+		public virtual IDictionary<string, string> Properties => this._properties;
+
+		public virtual string Type
+		{
+			get => this._type;
+			set => this._type = value;
+		}
+
+		public virtual string Value
+		{
+			get => this._value;
+			set => this._value = value;
+		}
+
+		public virtual string ValueType
+		{
+			get => this._valueType;
+			set => this._valueType = value;
+		}
+
+		#endregion
+
+		#region Methods
+
+		public virtual Claim Build()
+		{
+			return new Claim(this.Type, this.Value, this.ValueType, this.Issuer, this.OriginalIssuer);
+		}
+
+		#endregion
+	}
+}
