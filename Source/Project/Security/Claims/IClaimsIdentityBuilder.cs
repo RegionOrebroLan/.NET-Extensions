@@ -7,7 +7,9 @@ namespace RegionOrebroLan.Security.Claims
 	{
 		#region Properties
 
+		IClaimsIdentityBuilder ActorBuilder { get; set; }
 		string AuthenticationType { get; set; }
+		object BootstrapContext { get; set; }
 		IList<IClaimBuilder> ClaimBuilders { get; }
 		string Label { get; set; }
 		string NameClaimType { get; set; }

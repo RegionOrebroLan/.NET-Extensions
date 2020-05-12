@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Claims;
 
@@ -8,7 +10,9 @@ namespace RegionOrebroLan.Security.Claims
 	{
 		#region Fields
 
+		private IClaimsIdentityBuilder _actorBuilder;
 		private string _authenticationType;
+		private object _bootstrapContext;
 		private readonly IList<IClaimBuilder> _claimBuilders = new List<IClaimBuilder>();
 		private string _label;
 		private string _nameClaimType;
@@ -24,7 +28,11 @@ namespace RegionOrebroLan.Security.Claims
 		{
 			claimsIdentity = claimsIdentity?.Clone();
 
+			if(claimsIdentity?.Actor != null)
+				this._actorBuilder = new ClaimsIdentityBuilder(claimsIdentity.Actor);
+
 			this._authenticationType = claimsIdentity?.AuthenticationType;
+			this._bootstrapContext = claimsIdentity?.BootstrapContext;
 			this._label = claimsIdentity?.Label;
 			this._nameClaimType = claimsIdentity?.NameClaimType;
 			this._roleClaimType = claimsIdentity?.RoleClaimType;
@@ -42,10 +50,22 @@ namespace RegionOrebroLan.Security.Claims
 
 		#region Properties
 
+		public virtual IClaimsIdentityBuilder ActorBuilder
+		{
+			get => this._actorBuilder;
+			set => this._actorBuilder = value;
+		}
+
 		public virtual string AuthenticationType
 		{
 			get => this._authenticationType;
 			set => this._authenticationType = value;
+		}
+
+		public virtual object BootstrapContext
+		{
+			get => this._bootstrapContext;
+			set => this._bootstrapContext = value;
 		}
 
 		public virtual IList<IClaimBuilder> ClaimBuilders => this._claimBuilders;
@@ -72,14 +92,26 @@ namespace RegionOrebroLan.Security.Claims
 
 		#region Methods
 
+		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		public virtual ClaimsIdentity Build()
 		{
-			var claims = this.ClaimBuilders.Where(claimBuilder => claimBuilder != null).Select(claimBuilder => claimBuilder.Build());
-
-			return new ClaimsIdentity(claims, this.AuthenticationType, this.NameClaimType, this.RoleClaimType)
+			try
 			{
-				Label = this.Label
-			};
+				var claims = this.ClaimBuilders.Where(claimBuilder => claimBuilder != null).Select(claimBuilder => claimBuilder.Build());
+
+				var claimsIdentity = new ClaimsIdentity(claims, this.AuthenticationType, this.NameClaimType, this.RoleClaimType)
+				{
+					Actor = this.ActorBuilder?.Build(),
+					BootstrapContext = this.BootstrapContext,
+					Label = this.Label
+				};
+
+				return claimsIdentity;
+			}
+			catch(Exception exception)
+			{
+				throw new InvalidOperationException("Could not build claims-identity.", exception);
+			}
 		}
 
 		#endregion

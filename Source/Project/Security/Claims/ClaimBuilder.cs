@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
 namespace RegionOrebroLan.Security.Claims
@@ -79,9 +81,24 @@ namespace RegionOrebroLan.Security.Claims
 
 		#region Methods
 
+		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		public virtual Claim Build()
 		{
-			return new Claim(this.Type, this.Value, this.ValueType, this.Issuer, this.OriginalIssuer);
+			try
+			{
+				var claim = new Claim(this.Type, this.Value, this.ValueType, this.Issuer, this.OriginalIssuer);
+
+				foreach(var property in this.Properties)
+				{
+					claim.Properties.Add(property.Key, property.Value);
+				}
+
+				return claim;
+			}
+			catch(Exception exception)
+			{
+				throw new InvalidOperationException("Could not build claim.", exception);
+			}
 		}
 
 		#endregion
