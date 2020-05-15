@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace RegionOrebroLan.Security.Claims
 {
-	public interface IClaimsPrincipalBuilder
+	public interface IClaimsPrincipalBuilder : ICloneable<IClaimsPrincipalBuilder>
 	{
 		#region Properties
 

@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Security.Claims;
 
 namespace RegionOrebroLan.Security.Claims
@@ -13,7 +11,7 @@ namespace RegionOrebroLan.Security.Claims
 		private IClaimsIdentityBuilder _actorBuilder;
 		private string _authenticationType;
 		private object _bootstrapContext;
-		private readonly IList<IClaimBuilder> _claimBuilders = new List<IClaimBuilder>();
+		private readonly IClaimBuilderCollection _claimBuilders = new ClaimBuilderCollection();
 		private string _label;
 		private string _nameClaimType;
 		private string _roleClaimType;
@@ -68,7 +66,7 @@ namespace RegionOrebroLan.Security.Claims
 			set => this._bootstrapContext = value;
 		}
 
-		public virtual IList<IClaimBuilder> ClaimBuilders => this._claimBuilders;
+		public virtual IClaimBuilderCollection ClaimBuilders => this._claimBuilders;
 
 		public virtual string Label
 		{
@@ -97,9 +95,7 @@ namespace RegionOrebroLan.Security.Claims
 		{
 			try
 			{
-				var claims = this.ClaimBuilders.Where(claimBuilder => claimBuilder != null).Select(claimBuilder => claimBuilder.Build());
-
-				var claimsIdentity = new ClaimsIdentity(claims, this.AuthenticationType, this.NameClaimType, this.RoleClaimType)
+				var claimsIdentity = new ClaimsIdentity(this.ClaimBuilders.Build(), this.AuthenticationType, this.NameClaimType, this.RoleClaimType)
 				{
 					Actor = this.ActorBuilder?.Build(),
 					BootstrapContext = this.BootstrapContext,
@@ -112,6 +108,31 @@ namespace RegionOrebroLan.Security.Claims
 			{
 				throw new InvalidOperationException("Could not build claims-identity.", exception);
 			}
+		}
+
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		public virtual IClaimsIdentityBuilder Clone()
+		{
+			var clone = new ClaimsIdentityBuilder
+			{
+				BootstrapContext = this.BootstrapContext,
+				ActorBuilder = this.ActorBuilder.Clone(),
+				AuthenticationType = this.AuthenticationType,
+				Label = this.Label,
+				NameClaimType = this.NameClaimType,
+				RoleClaimType = this.RoleClaimType
+			};
+
+			foreach(var claimBuilder in this.ClaimBuilders)
+			{
+				clone.ClaimBuilders.Add(claimBuilder.Clone());
+			}
+
+			return clone;
 		}
 
 		#endregion

@@ -101,6 +101,30 @@ namespace RegionOrebroLan.Security.Claims
 			}
 		}
 
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		public virtual IClaimBuilder Clone()
+		{
+			var clone = new ClaimBuilder
+			{
+				Issuer = this.Issuer,
+				OriginalIssuer = this.OriginalIssuer,
+				Type = this.Type,
+				Value = this.Value,
+				ValueType = this.ValueType,
+			};
+
+			foreach(var property in this.Properties)
+			{
+				clone.Properties.Add(property.Key, property.Value);
+			}
+
+			return clone;
+		}
+
 		#endregion
 	}
 }

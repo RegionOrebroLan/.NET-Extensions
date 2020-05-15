@@ -56,6 +56,23 @@ namespace RegionOrebroLan.Security.Claims
 			}
 		}
 
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		public virtual IClaimsPrincipalBuilder Clone()
+		{
+			var clone = new ClaimsPrincipalBuilder();
+
+			foreach(var claimsIdentityBuilder in this.ClaimsIdentityBuilders)
+			{
+				clone.ClaimsIdentityBuilders.Add(claimsIdentityBuilder.Clone());
+			}
+
+			return clone;
+		}
+
 		#endregion
 	}
 }
