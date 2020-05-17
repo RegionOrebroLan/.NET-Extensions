@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -5,6 +6,7 @@ using RegionOrebroLan.Abstractions;
 
 namespace RegionOrebroLan.Security.Cryptography
 {
+	[Obsolete("Overkill. This will be removed.")]
 	public class X509ChainElementWrapper : Wrapper<X509ChainElement>, IChainLink
 	{
 		#region Constructors

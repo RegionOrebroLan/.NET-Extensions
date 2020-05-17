@@ -11,6 +11,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{43D62E8E
 		Directory.Build.targets = Directory.Build.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Certificates", "Certificates", "{49372143-9CC0-4C70-82B7-8911BB839757}"
+	ProjectSection(SolutionItems) = preProject
+		.Global\Certificates\Certificate-Module.psm1 = .Global\Certificates\Certificate-Module.psm1
+		.Global\Certificates\Create-Test-Certificates.ps1 = .Global\Certificates\Create-Test-Certificates.ps1
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeAnalysis", "CodeAnalysis", "{E2B140BE-56E4-4D82-A011-E1D64F936198}"
 	ProjectSection(SolutionItems) = preProject
 		.Global\CodeAnalysis\All-Rules-As-Error.ruleset = .Global\CodeAnalysis\All-Rules-As-Error.ruleset
@@ -85,6 +91,7 @@ Global
 		{16598E18-E593-4C45-88FA-21A648D2A4A3} = {BD932090-BBDD-468D-990C-4425B779A1FD}
 		{3ED78059-9F54-4511-8A4F-D0DDF380EC0A} = {BD932090-BBDD-468D-990C-4425B779A1FD}
 		{C079270F-6D81-465C-B088-B792582A3E97} = {BD932090-BBDD-468D-990C-4425B779A1FD}
+		{49372143-9CC0-4C70-82B7-8911BB839757} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D7A5EBB-83F7-4E96-9BFA-4FC6B4C3856E}

@@ -1,8 +1,10 @@
+using System;
 using System.Security.Cryptography.X509Certificates;
 using RegionOrebroLan.Abstractions;
 
 namespace RegionOrebroLan.Security.Cryptography
 {
+	[Obsolete("Overkill. This will be removed.")]
 	public class X509ChainStatusWrapper : Wrapper<X509ChainStatus>, IChainStatus
 	{
 		#region Constructors

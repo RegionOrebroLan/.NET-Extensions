@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using RegionOrebroLan.Abstractions;
-using RegionOrebroLan.Collections.Generic.Extensions;
+using System.Threading.Tasks;
+using RegionOrebroLan.Abstractions.Extensions;
 using RegionOrebroLan.Security.Cryptography.Validation.Configuration;
+using RegionOrebroLan.Validation;
 
 namespace RegionOrebroLan.Security.Cryptography.Validation
 {
@@ -14,150 +13,166 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 	{
 		#region Methods
 
-		protected internal virtual X509Chain CreateChain(ICertificateValidationOptions options)
+		protected internal virtual X509Chain CreateChain(bool? useMachineContext)
 		{
-			var useMachineContext = options?.UseMachineContext;
+			// ReSharper disable ConvertIfStatementToReturnStatement
+			if(useMachineContext != null)
+				return new X509Chain(useMachineContext.Value);
+			// ReSharper restore ConvertIfStatementToReturnStatement
 
-			var chain = useMachineContext == null ? new X509Chain() : new X509Chain(useMachineContext.Value);
+			return new X509Chain();
+		}
 
-			chain.ChainPolicy = this.CreateChainPolicy(options);
+		protected internal virtual X509Chain CreateChain(X509Certificate2 certificate, CertificateValidationOptions options)
+		{
+			var chainPolicy = this.CreateChainPolicy(certificate, options);
+
+			var chain = this.CreateChain(options?.UseMachineContext);
+
+			chain.ChainPolicy = chainPolicy;
 
 			return chain;
 		}
 
-		protected internal virtual X509ChainPolicy CreateChainPolicy(ICertificateValidationOptions options)
+		protected internal virtual X509ChainPolicy CreateChainPolicy(X509Certificate2 certificate, CertificateValidationOptions options)
 		{
+			if(certificate == null)
+				throw new ArgumentNullException(nameof(certificate));
+
+			if(options == null)
+				throw new ArgumentNullException(nameof(options));
+
 			var chainPolicy = new X509ChainPolicy();
 
-			// ReSharper disable InvertIf
-			if(options != null)
+			foreach(var item in options.ApplicationPolicyObjectIdentifiers)
 			{
-				if(options.ApplicationPolicy.Any())
-				{
-					foreach(var item in this.GetValidatedObjectIdentifiers(options.ApplicationPolicy, "Application-policy option"))
-					{
-						chainPolicy.ApplicationPolicy.Add(item);
-					}
-				}
-
-				if(options.CertificatePolicy.Any())
-				{
-					foreach(var item in this.GetValidatedObjectIdentifiers(options.CertificatePolicy, "Certificate-policy option"))
-					{
-						chainPolicy.CertificatePolicy.Add(item);
-					}
-				}
-
-				if(options.RevocationFlag != null)
-					chainPolicy.RevocationFlag = options.RevocationFlag.Value;
-
-				if(options.RevocationMode != null)
-					chainPolicy.RevocationMode = options.RevocationMode.Value;
-
-				if(options.UrlRetrievalTimeout != null)
-					chainPolicy.UrlRetrievalTimeout = options.UrlRetrievalTimeout.Value;
-
-				if(options.ValidCertificates.Any())
-				{
-					foreach(var item in this.GetValidatedCertificates(options.ValidCertificates, "Valid certificates option"))
-					{
-						chainPolicy.ExtraStore.Add(item);
-					}
-				}
-
-				if(options.VerificationFlags != null)
-					chainPolicy.VerificationFlags = options.VerificationFlags.Value;
-
-				if(options.VerificationTime != null)
-					chainPolicy.VerificationTime = options.VerificationTime.Value;
+				chainPolicy.ApplicationPolicy.Add(new Oid(item));
 			}
-			// ReSharper restore InvertIf
+
+			foreach(var item in options.CertificatePolicyObjectIdentifiers)
+			{
+				chainPolicy.CertificatePolicy.Add(new Oid(item));
+			}
+
+			if(options.RevocationFlag != null)
+				chainPolicy.RevocationFlag = options.RevocationFlag.Value;
+
+			if(options.RevocationMode != null)
+				chainPolicy.RevocationMode = options.RevocationMode.Value;
+
+			if(options.UrlRetrievalTimeout != null)
+				chainPolicy.UrlRetrievalTimeout = options.UrlRetrievalTimeout.Value;
+
+			foreach(var trustedIntermediateCertificate in options.TrustedIntermediateCertificates)
+			{
+				chainPolicy.ExtraStore.Add(this.UnwrapCertificate(trustedIntermediateCertificate));
+			}
+
+			foreach(var trustedRootCertificate in options.TrustedRootCertificates)
+			{
+				chainPolicy.ExtraStore.Add(this.UnwrapCertificate(trustedRootCertificate));
+			}
+
+			if(options.VerificationFlags != null)
+				chainPolicy.VerificationFlags = options.VerificationFlags.Value;
+
+			if(options.VerificationTime != null)
+				chainPolicy.VerificationTime = options.VerificationTime.Value;
 
 			return chainPolicy;
 		}
 
-		protected internal virtual Exception CreateInvalidItemTypeException(string label, Type type)
+		protected internal virtual bool IsSelfSignedCertificate(X509Certificate2 certificate)
 		{
-			return new InvalidOperationException($"{label}: the current implementation only supports items implementing \"{type}\".");
+			if(certificate == null)
+				throw new ArgumentNullException(nameof(certificate));
+
+			Span<byte> subject = certificate.SubjectName.RawData;
+			Span<byte> issuer = certificate.IssuerName.RawData;
+
+			return subject.SequenceEqual(issuer);
 		}
 
-		protected internal virtual Exception CreateNullItemException(string label)
+		protected internal virtual X509Certificate2 UnwrapCertificate(ICertificate certificate)
 		{
-			return new InvalidOperationException($"{label}: an item can not be null.");
-		}
-
-		protected internal virtual IEnumerable<X509Certificate2> GetValidatedCertificates(IEnumerable<ICertificate> certificates, string label)
-		{
-			var validatedCertificates = new List<X509Certificate2>();
-
-			foreach(var certificate in certificates ?? Enumerable.Empty<ICertificate>())
-			{
-				if(certificate == null)
-					throw this.CreateNullItemException(label);
-
-				if(!(certificate is IWrapper<X509Certificate2> wrapper))
-					throw this.CreateInvalidItemTypeException(label, typeof(IWrapper<X509Certificate2>));
-
-				validatedCertificates.Add(wrapper.WrappedInstance);
-			}
-
-			return validatedCertificates;
-		}
-
-		protected internal virtual IEnumerable<Oid> GetValidatedObjectIdentifiers(IEnumerable<IOid> items, string label)
-		{
-			var validatedObjectIdentifiers = new List<Oid>();
-
-			foreach(var item in items ?? Enumerable.Empty<IOid>())
-			{
-				if(item == null)
-					throw this.CreateNullItemException(label);
-
-				if(!(item is IWrapper<Oid> wrapper))
-					throw this.CreateInvalidItemTypeException(label, typeof(IWrapper<Oid>));
-
-				validatedObjectIdentifiers.Add(wrapper.WrappedInstance);
-			}
-
-			return validatedObjectIdentifiers;
-		}
-
-		[SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
-		[SuppressMessage("Maintainability", "CA1506:Avoid excessive class coupling")]
-		public virtual ICertificateValidationResult Validate(ICertificate certificate, ICertificateValidationOptions options = null)
-		{
-			var result = new CertificateValidationResult();
-
 			try
 			{
-				if(certificate == null)
-					throw new ArgumentNullException(nameof(certificate));
-
-				if(!(certificate is IWrapper<X509Certificate2> wrapper))
-					throw new ArgumentException($"The current implementation only supports certificates implementing \"{typeof(IWrapper<X509Certificate2>)}\".", nameof(certificate));
-
-				var chain = this.CreateChain(options);
-
-				var valid = chain.Build(wrapper.WrappedInstance);
-
-				result.Chain.Add(chain.ChainElements.Cast<X509ChainElement>().Select(item => (X509ChainElementWrapper) item));
-				result.Status.Add(chain.ChainStatus.Select(item => (X509ChainStatusWrapper) item));
-
-				if(!valid)
-				{
-					if(chain.ChainStatus.Any())
-						result.Exceptions.Add(chain.ChainStatus.Select(item => new InvalidOperationException($"{item.Status}: {item.StatusInformation}")));
-					else
-						result.Exceptions.Add(new InvalidOperationException("The certificate chain is not valid."));
-				}
+				return certificate.Unwrap<X509Certificate2>();
 			}
 			catch(Exception exception)
 			{
-				result.Exceptions.Add(exception);
+				throw new InvalidOperationException($"Could not unwrap certificate {(certificate != null ? $"\"{certificate.Subject}\"" : "NULL")}.", exception);
 			}
+		}
 
-			return result;
+		public virtual IValidationResult Validate(ICertificate certificate, CertificateValidatorOptions options)
+		{
+			return this.Validate(this.UnwrapCertificate(certificate), options);
+		}
+
+		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
+		public virtual IValidationResult Validate(X509Certificate2 certificate, CertificateValidatorOptions options)
+		{
+			if(certificate == null)
+				throw new ArgumentNullException(nameof(certificate));
+
+			if(options == null)
+				throw new ArgumentNullException(nameof(options));
+
+			var validationResult = new ValidationResult();
+
+			var isSelfSignedCertificate = this.IsSelfSignedCertificate(certificate);
+
+			if(isSelfSignedCertificate && !options.AllowedCertificateKinds.HasFlag(CertificateKinds.SelfSigned))
+				validationResult.Exceptions.Add(new InvalidOperationException("Options do not allow self signed certificates."));
+
+			// ReSharper disable InvertIf
+			if(validationResult.Valid)
+			{
+				if(!isSelfSignedCertificate && !options.AllowedCertificateKinds.HasFlag(CertificateKinds.Chained))
+					validationResult.Exceptions.Add(new InvalidOperationException("Options do not allow chained certificates."));
+
+				if(validationResult.Valid)
+				{
+					var chain = this.CreateChain(certificate, isSelfSignedCertificate ? options.SelfSigned : options.Chained);
+
+					//if (isSelfSignedCertificate)
+					//	chain.ChainPolicy.ExtraStore.Add(certificate);
+
+					if(!chain.Build(certificate))
+					{
+						foreach(var chainStatus in chain.ChainStatus)
+						{
+							validationResult.Exceptions.Add(new InvalidOperationException($"{chainStatus.Status}: {chainStatus.StatusInformation}"));
+						}
+
+						foreach(var chainLink in chain.ChainElements)
+						{
+							foreach(var chainStatus in chainLink.ChainElementStatus)
+							{
+								validationResult.Exceptions.Add(new InvalidOperationException($"{chainLink.Certificate.Subject}: {chainStatus.Status} - {chainStatus.StatusInformation}"));
+							}
+						}
+					}
+				}
+			}
+			// ReSharper restore InvertIf
+
+			return validationResult;
+		}
+
+		public virtual async Task<IValidationResult> ValidateAsync(ICertificate certificate, CertificateValidatorOptions options)
+		{
+			// ReSharper disable MethodHasAsyncOverload
+			return await Task.FromResult(this.Validate(this.UnwrapCertificate(certificate), options)).ConfigureAwait(false);
+			// ReSharper restore MethodHasAsyncOverload
+		}
+
+		public virtual async Task<IValidationResult> ValidateAsync(X509Certificate2 certificate, CertificateValidatorOptions options)
+		{
+			// ReSharper disable MethodHasAsyncOverload
+			return await Task.FromResult(this.Validate(certificate, options)).ConfigureAwait(false);
+			// ReSharper restore MethodHasAsyncOverload
 		}
 
 		#endregion
