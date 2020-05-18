@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RegionOrebroLan.Security.Cryptography
 {
@@ -7,8 +8,8 @@ namespace RegionOrebroLan.Security.Cryptography
 	{
 		#region Properties
 
-		bool Archived { get; }
-		string FriendlyName { get; }
+		bool Archived { get; set; }
+		string FriendlyName { get; set; }
 		bool HasPrivateKey { get; }
 		string Issuer { get; }
 		IDistinguishedName IssuerName { get; }
@@ -21,6 +22,14 @@ namespace RegionOrebroLan.Security.Cryptography
 		IDistinguishedName SubjectName { get; }
 		string Thumbprint { get; }
 		int Version { get; }
+
+		#endregion
+
+		#region Methods
+
+		string GetNameInformation(X509NameType nameType, bool forIssuer);
+		void Reset();
+		string ToString(bool verbose);
 
 		#endregion
 	}

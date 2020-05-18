@@ -52,6 +52,11 @@ namespace RegionOrebroLan.Security.Cryptography
 			this.WrappedInstance.Dispose();
 		}
 
+		public virtual string ToString(bool verbose)
+		{
+			return this.WrappedInstance.ToString(verbose);
+		}
+
 		#endregion
 	}
 }

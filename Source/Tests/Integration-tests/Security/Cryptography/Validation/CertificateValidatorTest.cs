@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -40,9 +39,6 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		[SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code")]
 		public void Validate_IfTheCertificateIsChained_And_IfAllowUnknownCertificateAuthorityIsSet_ShouldReturnAValidValidationResult()
 		{
-			CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
-			CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en");
-
 			// ReSharper disable ConvertToUsingDeclaration
 			using(var certificate = new X509Certificate2(this.Chained3Path))
 			{
@@ -113,6 +109,99 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 				Assert.IsNotNull(validationResult);
 				Assert.IsTrue(validationResult.Valid);
 				Assert.IsFalse(validationResult.Exceptions.Any());
+			}
+			// ReSharper restore ConvertToUsingDeclaration
+		}
+
+		[TestMethod]
+		[SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code")]
+		public void Validate_MatchingForChainedCertificate_Test()
+		{
+			// ReSharper disable ConvertToUsingDeclaration
+			using(var certificate = new X509Certificate2(this.Chained3Path))
+			{
+				using(var intermediate1 = new X509Certificate2(this.Intermediate1Path))
+				{
+					using(var intermediate2 = new X509Certificate2(this.Intermediate2Path))
+					{
+						using(var intermediate3 = new X509Certificate2(this.Intermediate3Path))
+						{
+							using(var root = new X509Certificate2(this.RootPath))
+							{
+								var options = new CertificateValidatorOptions
+								{
+									AllowedCertificateKinds = CertificateKinds.Chained,
+									Chained =
+									{
+										RevocationFlag = X509RevocationFlag.EntireChain,
+										RevocationMode = X509RevocationMode.NoCheck
+									}
+								};
+
+								// The following add does not seem to be necessary.
+								options.Chained.TrustedIntermediateCertificates.Add((X509Certificate2Wrapper) intermediate1);
+								options.Chained.TrustedIntermediateCertificates.Add((X509Certificate2Wrapper) intermediate2);
+								options.Chained.TrustedIntermediateCertificates.Add((X509Certificate2Wrapper) intermediate3);
+								options.Chained.TrustedRootCertificates.Add((X509Certificate2Wrapper) root);
+
+								options.Chained.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+
+								// No matching
+								var validationResult = new CertificateValidator().Validate(certificate, options);
+								Assert.IsTrue(validationResult.Valid);
+
+								// Issuer matching exact
+								Assert.AreEqual("CN=Intermediate-3", certificate.Issuer);
+								options.Chained.Matching.Criteria.Add(new MatchingCriterionOptions
+								{
+									PropertyName = "Issuer",
+									ValuePattern = certificate.Issuer
+								});
+								Assert.IsFalse(options.Chained.Matching.AllCriteriaShouldMatch);
+								validationResult = new CertificateValidator().Validate(certificate, options);
+								Assert.IsTrue(validationResult.Valid);
+
+								options.Chained.Matching.Criteria.Add(new MatchingCriterionOptions
+								{
+									PropertyName = "issuer",
+									ValuePattern = "fd92abb7-3972-429a-90da-cdd1c6df49df"
+								});
+								options.Chained.Matching.Criteria.Add(new MatchingCriterionOptions
+								{
+									PropertyName = "iSsUeR",
+									ValuePattern = "11bd3d77-8313-4c2f-afff-b91f31b26323"
+								});
+								validationResult = new CertificateValidator().Validate(certificate, options);
+								Assert.IsTrue(validationResult.Valid);
+
+								options.Chained.Matching.AllCriteriaShouldMatch = true;
+								validationResult = new CertificateValidator().Validate(certificate, options);
+								Assert.IsFalse(validationResult.Valid);
+								Assert.AreEqual(2, validationResult.Exceptions.Count);
+
+								// Issuer matching any
+								options.Chained.Matching.AllCriteriaShouldMatch = false;
+								options.Chained.Matching.Criteria.Add(new MatchingCriterionOptions
+								{
+									PropertyName = "Issuer",
+									ValuePattern = certificate.Issuer
+								});
+								options.Chained.Matching.Criteria.Add(new MatchingCriterionOptions
+								{
+									PropertyName = "issuer",
+									ValuePattern = "fd92abb7-3972-429a-90da-cdd1c6df49df"
+								});
+								options.Chained.Matching.Criteria.Add(new MatchingCriterionOptions
+								{
+									PropertyName = "iSsUeR",
+									ValuePattern = "11bd3d77-8313-4c2f-afff-b91f31b26323"
+								});
+								validationResult = new CertificateValidator().Validate(certificate, options);
+								Assert.IsTrue(validationResult.Valid);
+							}
+						}
+					}
+				}
 			}
 			// ReSharper restore ConvertToUsingDeclaration
 		}

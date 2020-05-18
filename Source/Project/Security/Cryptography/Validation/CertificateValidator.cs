@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using RegionOrebroLan.Abstractions.Extensions;
+using RegionOrebroLan.Collections.Generic.Extensions;
+using RegionOrebroLan.Extensions;
 using RegionOrebroLan.Security.Cryptography.Validation.Configuration;
 using RegionOrebroLan.Validation;
 
@@ -23,7 +28,7 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 			return new X509Chain();
 		}
 
-		protected internal virtual X509Chain CreateChain(X509Certificate2 certificate, CertificateValidationOptions options)
+		protected internal virtual X509Chain CreateChain(ICertificate certificate, CertificateValidationOptions options)
 		{
 			var chainPolicy = this.CreateChainPolicy(certificate, options);
 
@@ -34,7 +39,7 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 			return chain;
 		}
 
-		protected internal virtual X509ChainPolicy CreateChainPolicy(X509Certificate2 certificate, CertificateValidationOptions options)
+		protected internal virtual X509ChainPolicy CreateChainPolicy(ICertificate certificate, CertificateValidationOptions options)
 		{
 			if(certificate == null)
 				throw new ArgumentNullException(nameof(certificate));
@@ -82,15 +87,104 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 			return chainPolicy;
 		}
 
-		protected internal virtual bool IsSelfSignedCertificate(X509Certificate2 certificate)
+		protected internal virtual IValidationResult EvaluateMatching(ICertificate certificate, CertificateValidationOptions options)
+		{
+			var validationResult = new ValidationResult();
+
+			var matching = options?.Matching ?? new MatchingOptions();
+
+			// ReSharper disable InvertIf
+			if(matching.Criteria.Any())
+			{
+				var messagePrefix = $"Certificate {this.ValueAsFormatItem(certificate?.Subject)}: ";
+				var results = new List<KeyValuePair<string, bool>>();
+
+				foreach(var criterion in matching.Criteria)
+				{
+					var formattedPropertyName = this.ValueAsFormatItem(criterion.PropertyName);
+					var formattedValuePattern = this.ValueAsFormatItem(criterion.ValuePattern);
+					var canNotEvaluateMessagePrefix = $"{messagePrefix}Can not evaluate if certificate-property {formattedPropertyName} matches value {formattedValuePattern} because";
+
+					if(certificate == null)
+					{
+						results.Add(new KeyValuePair<string, bool>($"{canNotEvaluateMessagePrefix} because the certificate is NULL.", false));
+						continue;
+					}
+
+					if(!this.TryGetCertificatePropertyValue(certificate, criterion.PropertyName, out var propertyValue))
+					{
+						results.Add(new KeyValuePair<string, bool>($"{canNotEvaluateMessagePrefix} because the certificate-property does not exist.", false));
+						continue;
+					}
+
+					var evaluateMessagePrefix = $"{messagePrefix}The value {this.ValueAsFormatItem(propertyValue)}, for certificate-property {formattedPropertyName}";
+
+					if((propertyValue == null && criterion.ValuePattern == null) || (propertyValue != null && propertyValue.Like(criterion.ValuePattern)))
+					{
+						if(!matching.AllCriteriaShouldMatch)
+							return validationResult;
+
+						results.Add(new KeyValuePair<string, bool>($"{evaluateMessagePrefix}, matches value {formattedValuePattern}.", true));
+						continue;
+					}
+
+					results.Add(new KeyValuePair<string, bool>($"{evaluateMessagePrefix}, do not match value {formattedValuePattern}.", false));
+				}
+
+				if((matching.AllCriteriaShouldMatch && results.Any(item => !item.Value)) || (!matching.AllCriteriaShouldMatch && !results.Any(item => item.Value)))
+					validationResult.Exceptions.Add(results.Where(item => !item.Value).Select(item => new EvaluateException(item.Key)));
+			}
+			// ReSharper restore InvertIf
+
+			return validationResult;
+		}
+
+		protected internal virtual bool IsSelfSignedCertificate(ICertificate certificate)
 		{
 			if(certificate == null)
 				throw new ArgumentNullException(nameof(certificate));
 
-			Span<byte> subject = certificate.SubjectName.RawData;
-			Span<byte> issuer = certificate.IssuerName.RawData;
+			Span<byte> subject = certificate.SubjectName.RawData.ToArray();
+			Span<byte> issuer = certificate.IssuerName.RawData.ToArray();
 
 			return subject.SequenceEqual(issuer);
+		}
+
+		protected internal virtual bool TryGetCertificatePropertyValue(ICertificate certificate, string propertyName, out string propertyValue)
+		{
+			propertyValue = null;
+
+			// ReSharper disable InvertIf
+			if(certificate != null && !string.IsNullOrWhiteSpace(propertyName))
+			{
+				const StringComparison comparison = StringComparison.OrdinalIgnoreCase;
+
+				Func<string> propertyFunction = null;
+
+				if(propertyName.Equals(nameof(certificate.FriendlyName), comparison))
+					propertyFunction = () => certificate.FriendlyName;
+
+				if(propertyName.Equals(nameof(certificate.Issuer), comparison))
+					propertyFunction = () => certificate.Issuer;
+
+				if(propertyName.Equals(nameof(certificate.SerialNumber), comparison))
+					propertyFunction = () => certificate.SerialNumber;
+
+				if(propertyName.Equals(nameof(certificate.Subject), comparison))
+					propertyFunction = () => certificate.Subject;
+
+				if(propertyName.Equals(nameof(certificate.Thumbprint), comparison))
+					propertyFunction = () => certificate.Thumbprint;
+
+				if(propertyFunction != null)
+				{
+					propertyValue = propertyFunction();
+					return true;
+				}
+			}
+			// ReSharper restore InvertIf
+
+			return false;
 		}
 
 		protected internal virtual X509Certificate2 UnwrapCertificate(ICertificate certificate)
@@ -101,17 +195,12 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 			}
 			catch(Exception exception)
 			{
-				throw new InvalidOperationException($"Could not unwrap certificate {(certificate != null ? $"\"{certificate.Subject}\"" : "NULL")}.", exception);
+				throw new InvalidOperationException($"Could not unwrap certificate {this.ValueAsFormatItem(certificate?.Subject)}.", exception);
 			}
 		}
 
-		public virtual IValidationResult Validate(ICertificate certificate, CertificateValidatorOptions options)
-		{
-			return this.Validate(this.UnwrapCertificate(certificate), options);
-		}
-
 		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
-		public virtual IValidationResult Validate(X509Certificate2 certificate, CertificateValidatorOptions options)
+		public virtual IValidationResult Validate(ICertificate certificate, CertificateValidatorOptions options)
 		{
 			if(certificate == null)
 				throw new ArgumentNullException(nameof(certificate));
@@ -134,12 +223,13 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 
 				if(validationResult.Valid)
 				{
-					var chain = this.CreateChain(certificate, isSelfSignedCertificate ? options.SelfSigned : options.Chained);
+					var validationOptions = isSelfSignedCertificate ? options.SelfSigned : options.Chained;
+					var chain = this.CreateChain(certificate, validationOptions);
 
 					//if (isSelfSignedCertificate)
 					//	chain.ChainPolicy.ExtraStore.Add(certificate);
 
-					if(!chain.Build(certificate))
+					if(!chain.Build(this.UnwrapCertificate(certificate)))
 					{
 						foreach(var chainStatus in chain.ChainStatus)
 						{
@@ -154,6 +244,9 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 							}
 						}
 					}
+
+					if(validationResult.Valid)
+						validationResult.Exceptions.Add(this.EvaluateMatching(certificate, validationOptions).Exceptions);
 				}
 			}
 			// ReSharper restore InvertIf
@@ -161,10 +254,15 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 			return validationResult;
 		}
 
+		public virtual IValidationResult Validate(X509Certificate2 certificate, CertificateValidatorOptions options)
+		{
+			return this.Validate((X509Certificate2Wrapper) certificate, options);
+		}
+
 		public virtual async Task<IValidationResult> ValidateAsync(ICertificate certificate, CertificateValidatorOptions options)
 		{
 			// ReSharper disable MethodHasAsyncOverload
-			return await Task.FromResult(this.Validate(this.UnwrapCertificate(certificate), options)).ConfigureAwait(false);
+			return await Task.FromResult(this.Validate(certificate, options)).ConfigureAwait(false);
 			// ReSharper restore MethodHasAsyncOverload
 		}
 
@@ -173,6 +271,11 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 			// ReSharper disable MethodHasAsyncOverload
 			return await Task.FromResult(this.Validate(certificate, options)).ConfigureAwait(false);
 			// ReSharper restore MethodHasAsyncOverload
+		}
+
+		protected internal virtual string ValueAsFormatItem(string value)
+		{
+			return value == null ? "NULL" : $"\"{value}\"";
 		}
 
 		#endregion

@@ -14,8 +14,18 @@ namespace RegionOrebroLan.Security.Cryptography
 
 		#region Properties
 
-		public virtual bool Archived => this.WrappedInstance.Archived;
-		public virtual string FriendlyName => this.WrappedInstance.FriendlyName;
+		public virtual bool Archived
+		{
+			get => this.WrappedInstance.Archived;
+			set => this.WrappedInstance.Archived = value;
+		}
+
+		public virtual string FriendlyName
+		{
+			get => this.WrappedInstance.FriendlyName;
+			set => this.WrappedInstance.FriendlyName = value;
+		}
+
 		public virtual bool HasPrivateKey => this.WrappedInstance.HasPrivateKey;
 		public virtual IDistinguishedName IssuerName => (X500DistinguishedNameWrapper) this.WrappedInstance.IssuerName;
 		public virtual DateTime NotAfter => this.WrappedInstance.NotAfter;
@@ -36,6 +46,11 @@ namespace RegionOrebroLan.Security.Cryptography
 			return certificate;
 		}
 
+		public virtual string GetNameInformation(X509NameType nameType, bool forIssuer)
+		{
+			return this.WrappedInstance.GetNameInfo(nameType, forIssuer);
+		}
+
 		#region Implicit operators
 
 		public static implicit operator X509Certificate2Wrapper(X509Certificate2 certificate)
@@ -44,6 +59,11 @@ namespace RegionOrebroLan.Security.Cryptography
 		}
 
 		#endregion
+
+		public virtual void Reset()
+		{
+			this.WrappedInstance.Reset();
+		}
 
 		#endregion
 	}
