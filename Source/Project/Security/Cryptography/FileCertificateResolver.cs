@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using RegionOrebroLan.DependencyInjection;
 using ObsoleteInstanceMode = RegionOrebroLan.ServiceLocation.InstanceMode;
 using ObsoleteServiceConfigurationAttribute = RegionOrebroLan.ServiceLocation.ServiceConfigurationAttribute;
@@ -30,9 +31,9 @@ namespace RegionOrebroLan.Security.Cryptography
 
 		#region Methods
 
-		public virtual ICertificate Resolve(string password, string path)
+		public virtual async Task<ICertificate> ResolveAsync(string password, string path)
 		{
-			return (X509Certificate2Wrapper) this.ResolveInternal(password, path);
+			return await Task.FromResult((X509Certificate2Wrapper) this.ResolveInternal(password, path)).ConfigureAwait(false);
 		}
 
 		protected internal virtual X509Certificate2 ResolveInternal(string password, string path)

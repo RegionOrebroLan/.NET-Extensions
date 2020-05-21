@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using RegionOrebroLan.DependencyInjection;
 using ObsoleteInstanceMode = RegionOrebroLan.ServiceLocation.InstanceMode;
 using ObsoleteServiceConfigurationAttribute = RegionOrebroLan.ServiceLocation.ServiceConfigurationAttribute;
@@ -57,9 +58,9 @@ namespace RegionOrebroLan.Security.Cryptography
 			}
 		}
 
-		public virtual ICertificate Resolve(string path, bool validOnly)
+		public virtual async Task<ICertificate> ResolveAsync(string path, bool validOnly)
 		{
-			return (X509Certificate2Wrapper) this.ResolveInternal(path, validOnly);
+			return await Task.FromResult((X509Certificate2Wrapper) this.ResolveInternal(path, validOnly)).ConfigureAwait(false);
 		}
 
 		protected internal virtual X509Certificate2 ResolveInternal(string path, bool validOnly)

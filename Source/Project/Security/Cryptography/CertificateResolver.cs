@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using RegionOrebroLan.DependencyInjection;
 using RegionOrebroLan.Security.Cryptography.Configuration;
 using ObsoleteInstanceMode = RegionOrebroLan.ServiceLocation.InstanceMode;
@@ -31,20 +33,36 @@ namespace RegionOrebroLan.Security.Cryptography
 
 		#region Methods
 
-		public virtual ICertificate Resolve(FileResolverOptions options)
+		[SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "It is validated.")]
+		public virtual async Task<ICertificate> ResolveAsync(ResolverOptions options)
 		{
-			if(options == null)
-				throw new ArgumentNullException(nameof(options));
-
-			return this.FileCertificateResolver.Resolve(options.Password, options.Path);
+			switch(options)
+			{
+				case null:
+					throw new ArgumentNullException(nameof(options));
+				case FileResolverOptions fileResolverOptions:
+					return await this.ResolveAsync(fileResolverOptions).ConfigureAwait(false);
+				case StoreResolverOptions storeResolverOptions:
+					return await this.ResolveAsync(storeResolverOptions).ConfigureAwait(false);
+				default:
+					throw new NotImplementedException($"Resolving certificates with options of type \"{options.GetType()}\" is not implemented.");
+			}
 		}
 
-		public virtual ICertificate Resolve(StoreResolverOptions options)
+		protected internal virtual async Task<ICertificate> ResolveAsync(FileResolverOptions options)
 		{
 			if(options == null)
 				throw new ArgumentNullException(nameof(options));
 
-			return this.StoreCertificateResolver.Resolve(options.Path, options.ValidOnly);
+			return await this.FileCertificateResolver.ResolveAsync(options.Password, options.Path).ConfigureAwait(false);
+		}
+
+		protected internal virtual async Task<ICertificate> ResolveAsync(StoreResolverOptions options)
+		{
+			if(options == null)
+				throw new ArgumentNullException(nameof(options));
+
+			return await this.StoreCertificateResolver.ResolveAsync(options.Path, options.ValidOnly).ConfigureAwait(false);
 		}
 
 		#endregion

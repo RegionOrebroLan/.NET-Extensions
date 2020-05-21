@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using RegionOrebroLan.Security.Cryptography.Configuration;
 
 namespace RegionOrebroLan.Security.Cryptography
@@ -6,8 +7,7 @@ namespace RegionOrebroLan.Security.Cryptography
 	{
 		#region Methods
 
-		ICertificate Resolve(FileResolverOptions options);
-		ICertificate Resolve(StoreResolverOptions options);
+		Task<ICertificate> ResolveAsync(ResolverOptions options);
 
 		#endregion
 	}

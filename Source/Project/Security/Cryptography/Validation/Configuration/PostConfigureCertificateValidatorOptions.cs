@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RegionOrebroLan.Configuration;
@@ -26,7 +27,7 @@ namespace RegionOrebroLan.Security.Cryptography.Validation.Configuration
 
 		#region Methods
 
-		protected internal virtual ResolverOptions CreateResolverOptions(DynamicOptions dynamicOptions)
+		protected internal virtual async Task<ResolverOptions> CreateResolverOptionsAsync(DynamicOptions dynamicOptions)
 		{
 			if(dynamicOptions == null)
 				throw new ArgumentNullException(nameof(dynamicOptions));
@@ -35,31 +36,31 @@ namespace RegionOrebroLan.Security.Cryptography.Validation.Configuration
 
 			dynamicOptions.Options?.Bind(resolverOptions);
 
-			return resolverOptions;
+			return await Task.FromResult(resolverOptions).ConfigureAwait(false);
 		}
 
-		protected internal virtual void PostConfigure(CertificateValidationOptions options)
+		public virtual void PostConfigure(string name, CertificateValidatorOptions options)
+		{
+			this.PostConfigureAsync(options?.Chained).Wait();
+			this.PostConfigureAsync(options?.SelfSigned).Wait();
+		}
+
+		protected internal virtual async Task PostConfigureAsync(CertificateValidationOptions options)
 		{
 			if(options == null)
 				return;
 
 			foreach(var trustedCertificateResolverOptions in options.TrustedIntermediateCertificateResolvers ?? Enumerable.Empty<DynamicOptions>())
 			{
-				var resolverOptions = this.CreateResolverOptions(trustedCertificateResolverOptions);
-				options.TrustedIntermediateCertificates.Add(resolverOptions.Resolve(this.CertificateResolver));
+				var resolverOptions = await this.CreateResolverOptionsAsync(trustedCertificateResolverOptions).ConfigureAwait(false);
+				options.TrustedIntermediateCertificates.Add(await resolverOptions.ResolveAsync(this.CertificateResolver).ConfigureAwait(false));
 			}
 
 			foreach(var trustedCertificateResolverOptions in options.TrustedRootCertificateResolvers ?? Enumerable.Empty<DynamicOptions>())
 			{
-				var resolverOptions = this.CreateResolverOptions(trustedCertificateResolverOptions);
-				options.TrustedRootCertificates.Add(resolverOptions.Resolve(this.CertificateResolver));
+				var resolverOptions = await this.CreateResolverOptionsAsync(trustedCertificateResolverOptions).ConfigureAwait(false);
+				options.TrustedRootCertificates.Add(await resolverOptions.ResolveAsync(this.CertificateResolver).ConfigureAwait(false));
 			}
-		}
-
-		public virtual void PostConfigure(string name, CertificateValidatorOptions options)
-		{
-			this.PostConfigure(options?.Chained);
-			this.PostConfigure(options?.SelfSigned);
 		}
 
 		#endregion
