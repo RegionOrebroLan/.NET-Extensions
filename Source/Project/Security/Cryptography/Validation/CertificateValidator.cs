@@ -200,7 +200,7 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 		}
 
 		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
-		public virtual IValidationResult Validate(ICertificate certificate, CertificateValidatorOptions options)
+		public virtual async Task<IValidationResult> ValidateAsync(ICertificate certificate, CertificateValidatorOptions options)
 		{
 			if(certificate == null)
 				throw new ArgumentNullException(nameof(certificate));
@@ -251,26 +251,12 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 			}
 			// ReSharper restore InvertIf
 
-			return validationResult;
-		}
-
-		public virtual IValidationResult Validate(X509Certificate2 certificate, CertificateValidatorOptions options)
-		{
-			return this.Validate((X509Certificate2Wrapper) certificate, options);
-		}
-
-		public virtual async Task<IValidationResult> ValidateAsync(ICertificate certificate, CertificateValidatorOptions options)
-		{
-			// ReSharper disable MethodHasAsyncOverload
-			return await Task.FromResult(this.Validate(certificate, options)).ConfigureAwait(false);
-			// ReSharper restore MethodHasAsyncOverload
+			return await Task.FromResult(validationResult).ConfigureAwait(false);
 		}
 
 		public virtual async Task<IValidationResult> ValidateAsync(X509Certificate2 certificate, CertificateValidatorOptions options)
 		{
-			// ReSharper disable MethodHasAsyncOverload
-			return await Task.FromResult(this.Validate(certificate, options)).ConfigureAwait(false);
-			// ReSharper restore MethodHasAsyncOverload
+			return await this.ValidateAsync((X509Certificate2Wrapper) certificate, options).ConfigureAwait(false);
 		}
 
 		protected internal virtual string ValueAsFormatItem(string value)

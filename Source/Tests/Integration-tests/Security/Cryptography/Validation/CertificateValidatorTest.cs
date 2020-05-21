@@ -37,7 +37,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 
 		[TestMethod]
 		[SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code")]
-		public void Validate_IfTheCertificateIsChained_And_IfAllowUnknownCertificateAuthorityIsSet_ShouldReturnAValidValidationResult()
+		public void ValidateAsync_IfTheCertificateIsChained_And_IfAllowUnknownCertificateAuthorityIsSet_ShouldReturnAValidValidationResult()
 		{
 			// ReSharper disable ConvertToUsingDeclaration
 			using(var certificate = new X509Certificate2(this.Chained3Path))
@@ -67,19 +67,19 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 
 								options.Chained.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
 
-								var validationResult = new CertificateValidator().Validate(certificate, options);
+								var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
 								Assert.IsNotNull(validationResult);
 								Assert.IsTrue(validationResult.Valid);
 								Assert.IsFalse(validationResult.Exceptions.Any());
 
 								options.AllowedCertificateKinds = CertificateKinds.All;
-								validationResult = new CertificateValidator().Validate(certificate, options);
+								validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
 								Assert.IsNotNull(validationResult);
 								Assert.IsTrue(validationResult.Valid);
 								Assert.IsFalse(validationResult.Exceptions.Any());
 
 								options.AllowedCertificateKinds = CertificateKinds.Chained;
-								validationResult = new CertificateValidator().Validate(certificate, options);
+								validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
 								Assert.IsNotNull(validationResult);
 								Assert.IsTrue(validationResult.Valid);
 								Assert.IsFalse(validationResult.Exceptions.Any());
@@ -93,18 +93,18 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 
 		[TestMethod]
 		[SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code")]
-		public void Validate_IfTheCertificateIsSelfSigned_And_IfOptionsAllowSelfSigned_ShouldReturnAValidValidationResult()
+		public void ValidateAsync_IfTheCertificateIsSelfSigned_And_IfOptionsAllowSelfSigned_ShouldReturnAValidValidationResult()
 		{
 			// ReSharper disable ConvertToUsingDeclaration
 			using(var certificate = new X509Certificate2(this.SelfSignedPath))
 			{
-				var validationResult = new CertificateValidator().Validate(certificate, new CertificateValidatorOptions {AllowedCertificateKinds = CertificateKinds.All});
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, new CertificateValidatorOptions {AllowedCertificateKinds = CertificateKinds.All}).Result;
 
 				Assert.IsNotNull(validationResult);
 				Assert.IsTrue(validationResult.Valid);
 				Assert.IsFalse(validationResult.Exceptions.Any());
 
-				validationResult = new CertificateValidator().Validate(certificate, new CertificateValidatorOptions {AllowedCertificateKinds = CertificateKinds.SelfSigned});
+				validationResult = new CertificateValidator().ValidateAsync(certificate, new CertificateValidatorOptions {AllowedCertificateKinds = CertificateKinds.SelfSigned}).Result;
 
 				Assert.IsNotNull(validationResult);
 				Assert.IsTrue(validationResult.Valid);
@@ -115,7 +115,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 
 		[TestMethod]
 		[SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code")]
-		public void Validate_MatchingForChainedCertificate_Test()
+		public void ValidateAsync_MatchingForChainedCertificate_Test()
 		{
 			// ReSharper disable ConvertToUsingDeclaration
 			using(var certificate = new X509Certificate2(this.Chained3Path))
@@ -147,7 +147,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 								options.Chained.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
 
 								// No matching
-								var validationResult = new CertificateValidator().Validate(certificate, options);
+								var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
 								Assert.IsTrue(validationResult.Valid);
 
 								// Issuer matching exact
@@ -158,7 +158,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 									ValuePattern = certificate.Issuer
 								});
 								Assert.IsFalse(options.Chained.Matching.AllCriteriaShouldMatch);
-								validationResult = new CertificateValidator().Validate(certificate, options);
+								validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
 								Assert.IsTrue(validationResult.Valid);
 
 								options.Chained.Matching.Criteria.Add(new MatchingCriterionOptions
@@ -171,11 +171,11 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 									PropertyName = "iSsUeR",
 									ValuePattern = "11bd3d77-8313-4c2f-afff-b91f31b26323"
 								});
-								validationResult = new CertificateValidator().Validate(certificate, options);
+								validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
 								Assert.IsTrue(validationResult.Valid);
 
 								options.Chained.Matching.AllCriteriaShouldMatch = true;
-								validationResult = new CertificateValidator().Validate(certificate, options);
+								validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
 								Assert.IsFalse(validationResult.Valid);
 								Assert.AreEqual(2, validationResult.Exceptions.Count);
 
@@ -196,7 +196,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 									PropertyName = "iSsUeR",
 									ValuePattern = "11bd3d77-8313-4c2f-afff-b91f31b26323"
 								});
-								validationResult = new CertificateValidator().Validate(certificate, options);
+								validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
 								Assert.IsTrue(validationResult.Valid);
 							}
 						}

@@ -9,8 +9,6 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 	{
 		#region Methods
 
-		IValidationResult Validate(ICertificate certificate, CertificateValidatorOptions options);
-		IValidationResult Validate(X509Certificate2 certificate, CertificateValidatorOptions options);
 		Task<IValidationResult> ValidateAsync(ICertificate certificate, CertificateValidatorOptions options);
 		Task<IValidationResult> ValidateAsync(X509Certificate2 certificate, CertificateValidatorOptions options);
 
