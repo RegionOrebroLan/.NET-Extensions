@@ -53,13 +53,13 @@ namespace RegionOrebroLan.Security.Cryptography.Validation.Configuration
 			foreach(var trustedCertificateResolverOptions in options.TrustedIntermediateCertificateResolvers ?? Enumerable.Empty<DynamicOptions>())
 			{
 				var resolverOptions = await this.CreateResolverOptionsAsync(trustedCertificateResolverOptions).ConfigureAwait(false);
-				options.TrustedIntermediateCertificates.Add(await resolverOptions.ResolveAsync(this.CertificateResolver).ConfigureAwait(false));
+				options.TrustedIntermediateCertificates.Add(await this.CertificateResolver.ResolveAsync(resolverOptions).ConfigureAwait(false));
 			}
 
 			foreach(var trustedCertificateResolverOptions in options.TrustedRootCertificateResolvers ?? Enumerable.Empty<DynamicOptions>())
 			{
 				var resolverOptions = await this.CreateResolverOptionsAsync(trustedCertificateResolverOptions).ConfigureAwait(false);
-				options.TrustedRootCertificates.Add(await resolverOptions.ResolveAsync(this.CertificateResolver).ConfigureAwait(false));
+				options.TrustedRootCertificates.Add(await this.CertificateResolver.ResolveAsync(resolverOptions).ConfigureAwait(false));
 			}
 		}
 
