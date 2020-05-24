@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -10,6 +9,7 @@ using RegionOrebroLan.Security.Cryptography.Validation.Configuration;
 namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 {
 	[TestClass]
+	// ReSharper disable ConvertToUsingDeclaration
 	public class CertificateValidatorTest
 	{
 		#region Fields
@@ -35,89 +35,941 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 
 		#region Methods
 
-		[TestMethod]
-		[SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code")]
-		public void ValidateAsync_IfTheCertificateIsChained_And_IfAllowUnknownCertificateAuthorityIsSet_ShouldReturnAValidValidationResult()
+		protected internal virtual X509Certificate2 GetFirstValidCertificateFromLocalMachineRootStore()
 		{
-			// ReSharper disable ConvertToUsingDeclaration
-			using(var certificate = new X509Certificate2(this.Chained3Path))
+			using(var store = new X509Store(StoreName.Root, StoreLocation.LocalMachine))
 			{
-				using(var intermediate1 = new X509Certificate2(this.Intermediate1Path))
+				store.Open(OpenFlags.ReadOnly);
+
+				var trustedRootCertificate = store.Certificates.Cast<X509Certificate2>().FirstOrDefault(certificate => certificate.Verify());
+
+				Assert.IsNotNull(trustedRootCertificate, "The prerequisites for the test are not met. There is no valid certificate in the local-machine root store.");
+
+				return trustedRootCertificate;
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfNotRevocationNoCheck_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
+			{
+				var options = new CertificateValidatorOptions
 				{
-					using(var intermediate2 = new X509Certificate2(this.Intermediate2Path))
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
 					{
-						using(var intermediate3 = new X509Certificate2(this.Intermediate3Path))
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(6, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(1, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		{
+			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
+			{
+				using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
+				{
+					var options = new CertificateValidatorOptions
+					{
+						AllowedCertificateKinds = CertificateKinds.All,
+						Chained =
 						{
-							using(var root = new X509Certificate2(this.RootPath))
+							ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+							RevocationMode = X509RevocationMode.NoCheck,
+							VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+						}
+					};
+					options.Chained.TrustedRootCertificates.Add(root);
+					var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+					Assert.IsTrue(validationResult.Valid);
+				}
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfNotRevocationNoCheck_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(6, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(1, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		{
+			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
+			{
+				using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
+				{
+					var options = new CertificateValidatorOptions
+					{
+						AllowedCertificateKinds = CertificateKinds.Chained,
+						Chained =
+						{
+							ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+							RevocationMode = X509RevocationMode.NoCheck,
+							VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+						}
+					};
+					options.Chained.TrustedRootCertificates.Add(root);
+					var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+					Assert.IsTrue(validationResult.Valid);
+				}
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained_IfChainedAllowedOnly_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(6, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained1_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfNotRevocationNoCheck_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained1Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(8, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained1_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained1Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(2, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained1_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		{
+			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
+			{
+				using(var intermediate = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate1Path))
+				{
+					using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained1Path))
+					{
+						var options = new CertificateValidatorOptions
+						{
+							AllowedCertificateKinds = CertificateKinds.All,
+							Chained =
+							{
+								ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+								RevocationMode = X509RevocationMode.NoCheck,
+								VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+							}
+						};
+						options.Chained.TrustedIntermediateCertificates.Add(intermediate);
+						options.Chained.TrustedRootCertificates.Add(root);
+						var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+						Assert.IsTrue(validationResult.Valid);
+					}
+				}
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained1_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained1Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained1_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfNotRevocationNoCheck_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained1Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(8, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained1_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained1Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(2, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained1_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		{
+			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
+			{
+				using(var intermediate = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate1Path))
+				{
+					using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained1Path))
+					{
+						var options = new CertificateValidatorOptions
+						{
+							AllowedCertificateKinds = CertificateKinds.Chained,
+							Chained =
+							{
+								ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+								RevocationMode = X509RevocationMode.NoCheck,
+								VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+							}
+						};
+						options.Chained.TrustedIntermediateCertificates.Add(intermediate);
+						options.Chained.TrustedRootCertificates.Add(root);
+						var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+						Assert.IsTrue(validationResult.Valid);
+					}
+				}
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained1_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained1Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained2_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfNotRevocationNoCheck_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained2Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(10, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained2_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained2Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(3, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained2_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		{
+			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
+			{
+				using(var intermediate1 = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate1Path))
+				{
+					using(var intermediate2 = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate2Path))
+					{
+						using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained2Path))
+						{
+							var options = new CertificateValidatorOptions
+							{
+								AllowedCertificateKinds = CertificateKinds.All,
+								Chained =
+								{
+									ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+									RevocationMode = X509RevocationMode.NoCheck,
+									VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+								}
+							};
+							options.Chained.TrustedIntermediateCertificates.Add(intermediate1);
+							options.Chained.TrustedIntermediateCertificates.Add(intermediate2);
+							options.Chained.TrustedRootCertificates.Add(root);
+							var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+							Assert.IsTrue(validationResult.Valid);
+						}
+					}
+				}
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained2_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained2Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained2_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfNotRevocationNoCheck_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained2Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(10, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained2_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained2Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(3, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained2_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		{
+			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
+			{
+				using(var intermediate1 = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate1Path))
+				{
+					using(var intermediate2 = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate2Path))
+					{
+						using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained2Path))
+						{
+							var options = new CertificateValidatorOptions
+							{
+								AllowedCertificateKinds = CertificateKinds.Chained,
+								Chained =
+								{
+									ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+									RevocationMode = X509RevocationMode.NoCheck,
+									VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+								}
+							};
+							options.Chained.TrustedIntermediateCertificates.Add(intermediate1);
+							options.Chained.TrustedIntermediateCertificates.Add(intermediate2);
+							options.Chained.TrustedRootCertificates.Add(root);
+							var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+							Assert.IsTrue(validationResult.Valid);
+						}
+					}
+				}
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained2_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained2Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained3_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfNotRevocationNoCheck_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(12, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained3_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(4, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained3_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		{
+			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
+			{
+				using(var intermediate1 = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate1Path))
+				{
+					using(var intermediate2 = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate2Path))
+					{
+						using(var intermediate3 = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate3Path))
+						{
+							using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
 							{
 								var options = new CertificateValidatorOptions
 								{
+									AllowedCertificateKinds = CertificateKinds.All,
 									Chained =
 									{
-										RevocationFlag = X509RevocationFlag.EntireChain,
-										RevocationMode = X509RevocationMode.NoCheck
+										ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+										RevocationMode = X509RevocationMode.NoCheck,
+										VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 									}
 								};
-
-								// The following add does not seem to be necessary.
-								options.Chained.TrustedIntermediateCertificates.Add((X509Certificate2Wrapper) intermediate1);
-								options.Chained.TrustedIntermediateCertificates.Add((X509Certificate2Wrapper) intermediate2);
-								options.Chained.TrustedIntermediateCertificates.Add((X509Certificate2Wrapper) intermediate3);
-								options.Chained.TrustedRootCertificates.Add((X509Certificate2Wrapper) root);
-
-								options.Chained.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-
+								options.Chained.TrustedIntermediateCertificates.Add(intermediate1);
+								options.Chained.TrustedIntermediateCertificates.Add(intermediate2);
+								options.Chained.TrustedIntermediateCertificates.Add(intermediate3);
+								options.Chained.TrustedRootCertificates.Add(root);
 								var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
-								Assert.IsNotNull(validationResult);
 								Assert.IsTrue(validationResult.Valid);
-								Assert.IsFalse(validationResult.Exceptions.Any());
-
-								options.AllowedCertificateKinds = CertificateKinds.All;
-								validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
-								Assert.IsNotNull(validationResult);
-								Assert.IsTrue(validationResult.Valid);
-								Assert.IsFalse(validationResult.Exceptions.Any());
-
-								options.AllowedCertificateKinds = CertificateKinds.Chained;
-								validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
-								Assert.IsNotNull(validationResult);
-								Assert.IsTrue(validationResult.Valid);
-								Assert.IsFalse(validationResult.Exceptions.Any());
 							}
 						}
 					}
 				}
 			}
-			// ReSharper restore ConvertToUsingDeclaration
 		}
 
 		[TestMethod]
-		[SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code")]
-		public void ValidateAsync_IfTheCertificateIsSelfSigned_And_IfOptionsAllowSelfSigned_ShouldReturnAValidValidationResult()
+		public void ValidateAsync_FileChained3_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfSystemTrust_ShouldSucceed()
 		{
-			// ReSharper disable ConvertToUsingDeclaration
-			using(var certificate = new X509Certificate2(this.SelfSignedPath))
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
 			{
-				var validationResult = new CertificateValidator().ValidateAsync(certificate, new CertificateValidatorOptions {AllowedCertificateKinds = CertificateKinds.All}).Result;
-
-				Assert.IsNotNull(validationResult);
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
 				Assert.IsTrue(validationResult.Valid);
-				Assert.IsFalse(validationResult.Exceptions.Any());
-
-				validationResult = new CertificateValidator().ValidateAsync(certificate, new CertificateValidatorOptions {AllowedCertificateKinds = CertificateKinds.SelfSigned}).Result;
-
-				Assert.IsNotNull(validationResult);
-				Assert.IsTrue(validationResult.Valid);
-				Assert.IsFalse(validationResult.Exceptions.Any());
 			}
-			// ReSharper restore ConvertToUsingDeclaration
 		}
 
 		[TestMethod]
-		[SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code")]
+		public void ValidateAsync_FileChained3_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					Chained =
+					{
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained3_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfNotRevocationNoCheck_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(12, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained3_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+				Assert.AreEqual(4, validationResult.Exceptions.Count);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained3_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		{
+			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
+			{
+				using(var intermediate1 = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate1Path))
+				{
+					using(var intermediate2 = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate2Path))
+					{
+						using(var intermediate3 = (X509Certificate2Wrapper) new X509Certificate2(this.Intermediate3Path))
+						{
+							using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
+							{
+								var options = new CertificateValidatorOptions
+								{
+									AllowedCertificateKinds = CertificateKinds.Chained,
+									Chained =
+									{
+										ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+										RevocationMode = X509RevocationMode.NoCheck,
+										VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+									}
+								};
+								options.Chained.TrustedIntermediateCertificates.Add(intermediate1);
+								options.Chained.TrustedIntermediateCertificates.Add(intermediate2);
+								options.Chained.TrustedIntermediateCertificates.Add(intermediate3);
+								options.Chained.TrustedRootCertificates.Add(root);
+								var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+								Assert.IsTrue(validationResult.Valid);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained3_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfSystemTrust_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileChained3_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.Chained,
+					Chained =
+					{
+						RevocationMode = X509RevocationMode.NoCheck,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileSelfSigned_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					SelfSigned =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileSelfSigned_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					SelfSigned =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				options.SelfSigned.TrustedRootCertificates.Add(certificate);
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileSelfSigned_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All,
+					SelfSigned =
+					{
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileSelfSigned_IfAllAllowedOnly_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.All
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileSelfSigned_IfDefaultOptions_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
+			{
+				var options = new CertificateValidatorOptions();
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileSelfSigned_IfSelfSignedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.SelfSigned,
+					SelfSigned =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileSelfSigned_IfSelfSignedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.SelfSigned,
+					SelfSigned =
+					{
+						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				options.SelfSigned.TrustedRootCertificates.Add(certificate);
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileSelfSigned_IfSelfSignedAllowed_And_IfAllowUnknownCertificateAuthority_ShouldSucceed()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.SelfSigned,
+					SelfSigned =
+					{
+						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
+					}
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_FileSelfSigned_IfSelfSignedAllowedOnly_ShouldFail()
+		{
+			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
+			{
+				var options = new CertificateValidatorOptions
+				{
+					AllowedCertificateKinds = CertificateKinds.SelfSigned
+				};
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+				Assert.IsFalse(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
 		public void ValidateAsync_MatchingForChainedCertificate_Test()
 		{
-			// ReSharper disable ConvertToUsingDeclaration
 			using(var certificate = new X509Certificate2(this.Chained3Path))
 			{
 				using(var intermediate1 = new X509Certificate2(this.Intermediate1Path))
@@ -203,9 +1055,61 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					}
 				}
 			}
-			// ReSharper restore ConvertToUsingDeclaration
+		}
+
+		[TestMethod]
+		public void ValidateAsync_StoreRoot_IfAllAllowed_ShouldSucceed()
+		{
+			using(var certificate = this.GetFirstValidCertificateFromLocalMachineRootStore())
+			{
+				var options = new CertificateValidatorOptions {AllowedCertificateKinds = CertificateKinds.All};
+
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+
+				Assert.IsTrue(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_StoreRoot_IfChainedAllowed_ShouldFail()
+		{
+			using(var certificate = this.GetFirstValidCertificateFromLocalMachineRootStore())
+			{
+				var options = new CertificateValidatorOptions {AllowedCertificateKinds = CertificateKinds.Chained};
+
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+
+				Assert.IsFalse(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_StoreRoot_IfDefaultOptions_ShouldFail()
+		{
+			using(var certificate = this.GetFirstValidCertificateFromLocalMachineRootStore())
+			{
+				var options = new CertificateValidatorOptions();
+
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+
+				Assert.IsFalse(validationResult.Valid);
+			}
+		}
+
+		[TestMethod]
+		public void ValidateAsync_StoreRoot_IfSelfSignedAllowed_ShouldSucceed()
+		{
+			using(var certificate = this.GetFirstValidCertificateFromLocalMachineRootStore())
+			{
+				var options = new CertificateValidatorOptions {AllowedCertificateKinds = CertificateKinds.SelfSigned};
+
+				var validationResult = new CertificateValidator().ValidateAsync(certificate, options).Result;
+
+				Assert.IsTrue(validationResult.Valid);
+			}
 		}
 
 		#endregion
 	}
+	// ReSharper restore ConvertToUsingDeclaration
 }

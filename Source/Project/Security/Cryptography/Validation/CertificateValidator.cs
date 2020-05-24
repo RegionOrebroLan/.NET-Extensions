@@ -226,8 +226,9 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 					var validationOptions = isSelfSignedCertificate ? options.SelfSigned : options.Chained;
 					var chain = this.CreateChain(certificate, validationOptions);
 
+					//// Can not find any reason to add it to the extra store.
 					//if (isSelfSignedCertificate)
-					//	chain.ChainPolicy.ExtraStore.Add(certificate);
+					//	chain.ChainPolicy.ExtraStore.Add(this.UnwrapCertificate(certificate));
 
 					if(!chain.Build(this.UnwrapCertificate(certificate)))
 					{
@@ -243,6 +244,24 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 								validationResult.Exceptions.Add(new InvalidOperationException($"{chainLink.Certificate.Subject}: {chainStatus.Status} - {chainStatus.StatusInformation}"));
 							}
 						}
+					}
+
+					if(validationOptions.ChainTrustMode == X509ChainTrustMode.CustomRootTrust)
+					{
+						var certificates = chain.ChainElements.Cast<X509ChainElement>().Select(element => (X509Certificate2Wrapper) element.Certificate).ToArray();
+
+						var intermediateCertificates = certificates.Take(certificates.Length - 1).Skip(1).ToArray();
+
+						foreach(var intermediateCertificate in intermediateCertificates)
+						{
+							if(!validationOptions.TrustedIntermediateCertificates.Contains(intermediateCertificate))
+								validationResult.Exceptions.Add(new InvalidOperationException($"{certificate.Subject}: {nameof(validationOptions.ChainTrustMode)} is set to {validationOptions.ChainTrustMode} and the intermediate-certificate \"{intermediateCertificate.Subject}\" is not in the list of trusted intermediate-certificates."));
+						}
+
+						var rootCertificate = certificates.Last();
+
+						if(!validationOptions.TrustedRootCertificates.Contains(rootCertificate))
+							validationResult.Exceptions.Add(new InvalidOperationException($"{certificate.Subject}: {nameof(validationOptions.ChainTrustMode)} is set to {validationOptions.ChainTrustMode} and the root-certificate \"{rootCertificate.Subject}\" is not in the list of trusted root-certificates."));
 					}
 
 					if(validationResult.Valid)
