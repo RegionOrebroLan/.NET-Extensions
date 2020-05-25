@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace RegionOrebroLan.UnitTests
@@ -169,6 +169,21 @@ namespace RegionOrebroLan.UnitTests
 			};
 
 			Assert.AreEqual("http://localhost/?Key=Value", uriBuilderWrapper.Uri.ToString());
+		}
+
+		[TestMethod]
+		public void Uri_Get_IfModified_ShouldSetModifiedToFalse()
+		{
+			var uriBuilderWrapper = new UriBuilderWrapper("http://localhost/")
+			{
+				Fragment = "#Test"
+			};
+
+			Assert.IsTrue(uriBuilderWrapper.Modified);
+
+			_ = uriBuilderWrapper.Uri;
+
+			Assert.IsFalse(uriBuilderWrapper.Modified);
 		}
 
 		[TestMethod]

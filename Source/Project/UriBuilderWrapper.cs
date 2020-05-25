@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using RegionOrebroLan.Extensions;
 
@@ -185,8 +185,13 @@ namespace RegionOrebroLan
 		{
 			get
 			{
+				// ReSharper disable InvertIf
 				if(this._uri == null || this.Modified)
+				{
 					this._uri = new Lazy<IUri>(this.CreateUri);
+					this.Modified = false;
+				}
+				// ReSharper restore InvertIf
 
 				return this._uri.Value;
 			}

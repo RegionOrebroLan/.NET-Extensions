@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace RegionOrebroLan.UnitTests.Net462
 {
@@ -18,6 +18,21 @@ namespace RegionOrebroLan.UnitTests.Net462
 		public void IsDotNetFrameworkContext_ShouldReturnTrue()
 		{
 			Assert.IsTrue(new UriBuilderWrapper().IsDotNetFrameworkContext);
+		}
+
+		[TestMethod]
+		public void Uri_Get_IfModified_ShouldSetModifiedToFalse()
+		{
+			var uriBuilderWrapper = new UriBuilderWrapper("http://localhost/")
+			{
+				Fragment = "#Test"
+			};
+
+			Assert.IsTrue(uriBuilderWrapper.Modified);
+
+			_ = uriBuilderWrapper.Uri;
+
+			Assert.IsFalse(uriBuilderWrapper.Modified);
 		}
 
 		[TestMethod]
