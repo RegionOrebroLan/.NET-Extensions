@@ -246,7 +246,7 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 						}
 					}
 
-					if(validationOptions.ChainTrustMode == X509ChainTrustMode.CustomRootTrust)
+					if(validationOptions.CustomTrustChecking)
 					{
 						var certificates = chain.ChainElements.Cast<X509ChainElement>().Select(element => (X509Certificate2Wrapper) element.Certificate).ToArray();
 
@@ -255,13 +255,13 @@ namespace RegionOrebroLan.Security.Cryptography.Validation
 						foreach(var intermediateCertificate in intermediateCertificates)
 						{
 							if(!validationOptions.TrustedIntermediateCertificates.Contains(intermediateCertificate))
-								validationResult.Exceptions.Add(new InvalidOperationException($"{certificate.Subject}: {nameof(validationOptions.ChainTrustMode)} is set to {validationOptions.ChainTrustMode} and the intermediate-certificate \"{intermediateCertificate.Subject}\" is not in the list of trusted intermediate-certificates."));
+								validationResult.Exceptions.Add(new InvalidOperationException($"{certificate.Subject}: {nameof(validationOptions.CustomTrustChecking)} is set to {validationOptions.CustomTrustChecking} and the intermediate-certificate \"{intermediateCertificate.Subject}\" is not in the list of trusted intermediate-certificates."));
 						}
 
 						var rootCertificate = certificates.Last();
 
 						if(!validationOptions.TrustedRootCertificates.Contains(rootCertificate))
-							validationResult.Exceptions.Add(new InvalidOperationException($"{certificate.Subject}: {nameof(validationOptions.ChainTrustMode)} is set to {validationOptions.ChainTrustMode} and the root-certificate \"{rootCertificate.Subject}\" is not in the list of trusted root-certificates."));
+							validationResult.Exceptions.Add(new InvalidOperationException($"{certificate.Subject}: {nameof(validationOptions.CustomTrustChecking)} is set to {validationOptions.CustomTrustChecking} and the root-certificate \"{rootCertificate.Subject}\" is not in the list of trusted root-certificates."));
 					}
 
 					if(validationResult.Valid)

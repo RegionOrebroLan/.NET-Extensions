@@ -69,7 +69,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		public void ValidateAsync_FileChained_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfNotTrustedList_ShouldFail()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
 			{
@@ -78,7 +78,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.All,
 					Chained =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						RevocationMode = X509RevocationMode.NoCheck,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
@@ -90,7 +90,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		public void ValidateAsync_FileChained_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfTrustedList_ShouldSucceed()
 		{
 			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
 			{
@@ -101,7 +101,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 						AllowedCertificateKinds = CertificateKinds.All,
 						Chained =
 						{
-							ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+							CustomTrustChecking = true,
 							RevocationMode = X509RevocationMode.NoCheck,
 							VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 						}
@@ -152,7 +152,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		public void ValidateAsync_FileChained_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfNotTrustedList_ShouldFail()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.ChainedPath))
 			{
@@ -161,7 +161,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.Chained,
 					Chained =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						RevocationMode = X509RevocationMode.NoCheck,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
@@ -173,7 +173,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		public void ValidateAsync_FileChained_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfTrustedList_ShouldSucceed()
 		{
 			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
 			{
@@ -184,7 +184,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 						AllowedCertificateKinds = CertificateKinds.Chained,
 						Chained =
 						{
-							ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+							CustomTrustChecking = true,
 							RevocationMode = X509RevocationMode.NoCheck,
 							VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 						}
@@ -250,7 +250,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained1_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		public void ValidateAsync_FileChained1_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfNotTrustedList_ShouldFail()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained1Path))
 			{
@@ -259,7 +259,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.All,
 					Chained =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						RevocationMode = X509RevocationMode.NoCheck,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
@@ -271,7 +271,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained1_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		public void ValidateAsync_FileChained1_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfTrustedList_ShouldSucceed()
 		{
 			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
 			{
@@ -284,7 +284,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 							AllowedCertificateKinds = CertificateKinds.All,
 							Chained =
 							{
-								ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+								CustomTrustChecking = true,
 								RevocationMode = X509RevocationMode.NoCheck,
 								VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 							}
@@ -337,7 +337,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained1_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		public void ValidateAsync_FileChained1_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfNotTrustedList_ShouldFail()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained1Path))
 			{
@@ -346,7 +346,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.Chained,
 					Chained =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						RevocationMode = X509RevocationMode.NoCheck,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
@@ -358,7 +358,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained1_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		public void ValidateAsync_FileChained1_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfTrustedList_ShouldSucceed()
 		{
 			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
 			{
@@ -371,7 +371,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 							AllowedCertificateKinds = CertificateKinds.Chained,
 							Chained =
 							{
-								ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+								CustomTrustChecking = true,
 								RevocationMode = X509RevocationMode.NoCheck,
 								VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 							}
@@ -424,7 +424,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained2_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		public void ValidateAsync_FileChained2_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfNotTrustedList_ShouldFail()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained2Path))
 			{
@@ -433,7 +433,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.All,
 					Chained =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						RevocationMode = X509RevocationMode.NoCheck,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
@@ -445,7 +445,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained2_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		public void ValidateAsync_FileChained2_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfTrustedList_ShouldSucceed()
 		{
 			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
 			{
@@ -460,7 +460,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 								AllowedCertificateKinds = CertificateKinds.All,
 								Chained =
 								{
-									ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+									CustomTrustChecking = true,
 									RevocationMode = X509RevocationMode.NoCheck,
 									VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 								}
@@ -515,7 +515,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained2_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		public void ValidateAsync_FileChained2_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfNotTrustedList_ShouldFail()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained2Path))
 			{
@@ -524,7 +524,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.Chained,
 					Chained =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						RevocationMode = X509RevocationMode.NoCheck,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
@@ -536,7 +536,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained2_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		public void ValidateAsync_FileChained2_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfTrustedList_ShouldSucceed()
 		{
 			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
 			{
@@ -551,7 +551,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 								AllowedCertificateKinds = CertificateKinds.Chained,
 								Chained =
 								{
-									ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+									CustomTrustChecking = true,
 									RevocationMode = X509RevocationMode.NoCheck,
 									VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 								}
@@ -606,7 +606,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained3_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		public void ValidateAsync_FileChained3_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfNotTrustedList_ShouldFail()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
 			{
@@ -615,7 +615,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.All,
 					Chained =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						RevocationMode = X509RevocationMode.NoCheck,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
@@ -627,7 +627,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained3_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		public void ValidateAsync_FileChained3_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfTrustedList_ShouldSucceed()
 		{
 			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
 			{
@@ -644,7 +644,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 									AllowedCertificateKinds = CertificateKinds.All,
 									Chained =
 									{
-										ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+										CustomTrustChecking = true,
 										RevocationMode = X509RevocationMode.NoCheck,
 										VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 									}
@@ -720,7 +720,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained3_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		public void ValidateAsync_FileChained3_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfNotTrustedList_ShouldFail()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.Chained3Path))
 			{
@@ -729,7 +729,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.Chained,
 					Chained =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						RevocationMode = X509RevocationMode.NoCheck,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
@@ -741,7 +741,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileChained3_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		public void ValidateAsync_FileChained3_IfChainedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfRevocationNoCheck_And_IfCustomTrustChecking_And_IfTrustedList_ShouldSucceed()
 		{
 			using(var root = (X509Certificate2Wrapper) new X509Certificate2(this.RootPath))
 			{
@@ -758,7 +758,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 									AllowedCertificateKinds = CertificateKinds.Chained,
 									Chained =
 									{
-										ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+										CustomTrustChecking = true,
 										RevocationMode = X509RevocationMode.NoCheck,
 										VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 									}
@@ -815,7 +815,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileSelfSigned_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		public void ValidateAsync_FileSelfSigned_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomTrustChecking_And_IfNotTrustedList_ShouldFail()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
 			{
@@ -824,7 +824,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.All,
 					SelfSigned =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
 				};
@@ -834,7 +834,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileSelfSigned_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		public void ValidateAsync_FileSelfSigned_IfAllAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomTrustChecking_And_IfTrustedList_ShouldSucceed()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
 			{
@@ -843,7 +843,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.All,
 					SelfSigned =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
 				};
@@ -897,7 +897,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileSelfSigned_IfSelfSignedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomRootTrust_And_IfNotTrustedList_ShouldFail()
+		public void ValidateAsync_FileSelfSigned_IfSelfSignedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomTrustChecking_And_IfNotTrustedList_ShouldFail()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
 			{
@@ -906,7 +906,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.SelfSigned,
 					SelfSigned =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
 				};
@@ -916,7 +916,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 		}
 
 		[TestMethod]
-		public void ValidateAsync_FileSelfSigned_IfSelfSignedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomRootTrust_And_IfTrustedList_ShouldSucceed()
+		public void ValidateAsync_FileSelfSigned_IfSelfSignedAllowed_And_IfAllowUnknownCertificateAuthority_And_IfCustomTrustChecking_And_IfTrustedList_ShouldSucceed()
 		{
 			using(var certificate = (X509Certificate2Wrapper) new X509Certificate2(this.SelfSignedPath))
 			{
@@ -925,7 +925,7 @@ namespace RegionOrebroLan.IntegrationTests.Security.Cryptography.Validation
 					AllowedCertificateKinds = CertificateKinds.SelfSigned,
 					SelfSigned =
 					{
-						ChainTrustMode = X509ChainTrustMode.CustomRootTrust,
+						CustomTrustChecking = true,
 						VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority
 					}
 				};
