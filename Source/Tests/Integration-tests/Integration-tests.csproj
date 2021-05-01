@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="Build\Build.props" />
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<AssemblyName>RegionOrebroLan.IntegrationTests</AssemblyName>
+		<NoWarn>SYSLIB0011</NoWarn>
+		<TargetFrameworks>net462;net5.0;netcoreapp3.1</TargetFrameworks>
 	</PropertyGroup>
-	<Import Project="Build\Build.targets" />
 </Project>
