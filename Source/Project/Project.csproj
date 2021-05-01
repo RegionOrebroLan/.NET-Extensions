@@ -1,5 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="Build\Build.props" />
+	<PropertyGroup Label="Initial">
+		<Company>Region Örebro län</Company>
+		<VersionPrefix>1.2.6</VersionPrefix>
+		<VersionPrereleaseName>alpha</VersionPrereleaseName>
+	</PropertyGroup>
+	<PropertyGroup Label="Assembly">
+		<AssemblyName>RegionOrebroLan</AssemblyName>
+		<AssemblyOriginatorKeyFile>$(SolutionDir).Global\Signing\StrongName.snk</AssemblyOriginatorKeyFile>
+		<AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+		<Description>Additions and extensions for .NET.</Description>
+		<FileVersion>$(VersionPrefix).0</FileVersion>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Version>$(VersionPrefix)</Version>
+		<Version Condition="$(VersionPrereleaseName) != ''">$(Version)-$(VersionPrereleaseName)</Version>
+	</PropertyGroup>
+	<PropertyGroup Label="NuGet-Package">
+		<Authors>$(Company)</Authors>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/RegionOrebroLan/.NET-Extensions/</PackageProjectUrl>
+		<PackageReleaseNotes>https://github.com/RegionOrebroLan/.NET-Extensions/releases/</PackageReleaseNotes>
+		<PackageTags></PackageTags>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0" />
@@ -7,5 +29,13 @@
 		<PackageReference Include="RegionOrebroLan.Abstractions" Version="1.0.1-alpha" />
 		<PackageReference Include="RegionOrebroLan.DependencyInjection" Version="0.0.1-alpha" />
 	</ItemGroup>
-	<Import Project="Build\Build.targets" />
+	<Target Name="HandleAssemblyOriginatorKeyFile" BeforeTargets="BeforeBuild" Condition="$(SignAssembly) AND !Exists('$(AssemblyOriginatorKeyFile)')">
+		<PropertyGroup>
+			<_DevelopmentAssemblyOriginatorKeyFile>$(SolutionDir).Global\Signing\StrongName.Development.snk</_DevelopmentAssemblyOriginatorKeyFile>
+		</PropertyGroup>
+		<Warning Text="The strong-name-key-file '$(AssemblyOriginatorKeyFile)' does not exist. The strong-name-key-file '$(_DevelopmentAssemblyOriginatorKeyFile)' is used instead." />
+		<PropertyGroup>
+			<AssemblyOriginatorKeyFile>$(_DevelopmentAssemblyOriginatorKeyFile)</AssemblyOriginatorKeyFile>
+		</PropertyGroup>
+	</Target>
 </Project>
