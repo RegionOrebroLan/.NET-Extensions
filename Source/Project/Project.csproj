@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup Label="Initial">
 		<Company>Region Örebro län</Company>
-		<VersionPrefix>1.2.6</VersionPrefix>
+		<VersionPrefix>1.2.7</VersionPrefix>
 		<VersionPrereleaseName>alpha</VersionPrereleaseName>
 	</PropertyGroup>
 	<PropertyGroup Label="Assembly">
@@ -27,7 +27,7 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
 		<PackageReference Include="RegionOrebroLan.Abstractions" Version="1.0.1-alpha" />
-		<PackageReference Include="RegionOrebroLan.DependencyInjection" Version="0.0.1-alpha" />
+		<PackageReference Include="RegionOrebroLan.DependencyInjection" Version="0.0.2-alpha" />
 	</ItemGroup>
 	<Target Name="HandleAssemblyOriginatorKeyFile" BeforeTargets="BeforeBuild" Condition="$(SignAssembly) AND !Exists('$(AssemblyOriginatorKeyFile)')">
 		<PropertyGroup>
