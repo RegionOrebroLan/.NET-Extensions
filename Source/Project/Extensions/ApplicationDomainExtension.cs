@@ -1,5 +1,6 @@
 using System;
-using System.Globalization;
+using System.Diagnostics.CodeAnalysis;
+using RegionOrebroLan.Abstractions;
 
 namespace RegionOrebroLan.Extensions
 {
@@ -7,17 +8,22 @@ namespace RegionOrebroLan.Extensions
 	{
 		#region Methods
 
-		public static string GetDataDirectoryPath(this IApplicationDomain applicationDomain)
+		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
+		public static string GetDataDirectory(this IApplicationDomain applicationDomain, bool validate = true)
 		{
 			if(applicationDomain == null)
 				throw new ArgumentNullException(nameof(applicationDomain));
 
-			var dataDirectoryPath = (string) applicationDomain.GetData(AppDomainExtension.DataDirectoryName);
+			if(!(applicationDomain is IWrapper<AppDomain> appDomainWrapper))
+				throw new InvalidOperationException($"This method only supports {nameof(IApplicationDomain)}-instances implementing {nameof(IWrapper<AppDomain>)}.");
 
-			if(dataDirectoryPath == null)
-				throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "The variable \"{0}\" is not set for the application-domain.", AppDomainExtension.DataDirectoryName));
+			return appDomainWrapper.WrappedInstance.GetDataDirectory(validate);
+		}
 
-			return dataDirectoryPath;
+		[Obsolete("Use GetDataDirectory instead.")]
+		public static string GetDataDirectoryPath(this IApplicationDomain applicationDomain)
+		{
+			return applicationDomain.GetDataDirectory();
 		}
 
 		#endregion
