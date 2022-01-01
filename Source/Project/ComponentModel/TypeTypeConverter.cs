@@ -24,21 +24,23 @@ namespace RegionOrebroLan.ComponentModel
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			// ReSharper disable InvertIf
-			if(value is string text)
+			switch(value)
 			{
-				try
-				{
-					return Type.GetType(text, true, true);
-				}
-				catch(Exception exception)
-				{
-					throw new InvalidOperationException($"Can not convert from {typeof(string)} \"{text}\" to {typeof(Type)}.", exception);
-				}
+				case null:
+				case string text when text.Length == 0:
+					return null;
+				case string text:
+					try
+					{
+						return Type.GetType(text, true, true);
+					}
+					catch(Exception exception)
+					{
+						throw new InvalidOperationException($"Can not convert from {typeof(string)} \"{text}\" to {typeof(Type)}.", exception);
+					}
+				default:
+					return base.ConvertFrom(context, culture, value);
 			}
-			// ReSharper restore InvertIf
-
-			return base.ConvertFrom(context, culture, value);
 		}
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)

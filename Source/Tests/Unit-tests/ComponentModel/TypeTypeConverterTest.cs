@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RegionOrebroLan.ComponentModel;
@@ -11,7 +12,7 @@ namespace RegionOrebroLan.UnitTests.ComponentModel
 		#region Methods
 
 		[TestMethod]
-		public async Task CanConvertFrom_IfSourceTypeIsString_ShouldReturnTrue()
+		public async Task CanConvertFrom_IfTheSourceTypeParameterIsString_ShouldReturnTrue()
 		{
 			await Task.CompletedTask;
 
@@ -19,7 +20,7 @@ namespace RegionOrebroLan.UnitTests.ComponentModel
 		}
 
 		[TestMethod]
-		public async Task CanConvertTo_IfDestinationTypeIsString_ShouldReturnTrue()
+		public async Task CanConvertTo_IfTheDestinationTypeParameterIsString_ShouldReturnTrue()
 		{
 			await Task.CompletedTask;
 
@@ -27,8 +28,16 @@ namespace RegionOrebroLan.UnitTests.ComponentModel
 		}
 
 		[TestMethod]
+		public async Task ConvertFrom_IfTheValueParameterIsAnEmptyString_ShouldReturnNull()
+		{
+			await Task.CompletedTask;
+
+			Assert.IsNull(new TypeTypeConverter().ConvertFrom(string.Empty));
+		}
+
+		[TestMethod]
 		[ExpectedException(typeof(NotSupportedException))]
-		public async Task ConvertFrom_IfValueIsNotAString_ShouldThrowANotSupportedException()
+		public async Task ConvertFrom_IfTheValueParameterIsNotAString_ShouldThrowANotSupportedException()
 		{
 			await Task.CompletedTask;
 
@@ -36,7 +45,15 @@ namespace RegionOrebroLan.UnitTests.ComponentModel
 		}
 
 		[TestMethod]
-		public async Task ConvertFrom_String_Test()
+		public async Task ConvertFrom_IfTheValueParameterIsNull_ShouldReturnNull()
+		{
+			await Task.CompletedTask;
+
+			Assert.IsNull(new TypeTypeConverter().ConvertFrom(null));
+		}
+
+		[TestMethod]
+		public async Task ConvertFrom_Test()
 		{
 			await Task.CompletedTask;
 
@@ -65,7 +82,7 @@ namespace RegionOrebroLan.UnitTests.ComponentModel
 
 		[TestMethod]
 		[ExpectedException(typeof(NotSupportedException))]
-		public async Task ConvertTo_IfDestinationTypeIsNotString_ShouldThrowANotSupportedException()
+		public async Task ConvertTo_IfTheDestinationTypeParameterIsNotString_ShouldThrowANotSupportedException()
 		{
 			await Task.CompletedTask;
 
@@ -82,6 +99,40 @@ namespace RegionOrebroLan.UnitTests.ComponentModel
 			Assert.AreEqual($"{stringType.FullName}, {stringType.Assembly.GetName().Name}", new TypeTypeConverter().ConvertTo(typeof(string), typeof(string)));
 
 			Assert.AreEqual(stringType.AssemblyQualifiedName, new TypeTypeConverter { UseAssemblyQualifiedName = true }.ConvertTo(typeof(string), typeof(string)));
+		}
+
+		[TestMethod]
+		public async Task Prerequisite_DateTimeConverter_ConvertFrom_IfTheValueParameterIsAnEmptyString_ShouldReturnDateTimeMinValue()
+		{
+			await Task.CompletedTask;
+
+			Assert.AreEqual(DateTime.MinValue, new DateTimeConverter().ConvertFrom(string.Empty));
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(NotSupportedException))]
+		public async Task Prerequisite_DateTimeConverter_ConvertFrom_IfTheValueParameterIsNull_ShouldThrowANotSupportedException()
+		{
+			await Task.CompletedTask;
+
+			new DateTimeConverter().ConvertFrom(null);
+		}
+
+		[TestMethod]
+		public async Task Prerequisite_UriTypeConverter_ConvertFrom_IfTheValueParameterIsAnEmptyString_ShouldReturnNull()
+		{
+			await Task.CompletedTask;
+
+			Assert.IsNull(new UriTypeConverter().ConvertFrom(string.Empty));
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(NotSupportedException))]
+		public async Task Prerequisite_UriTypeConverter_ConvertFrom_IfTheValueParameterIsNull_ShouldThrowANotSupportedException()
+		{
+			await Task.CompletedTask;
+
+			new UriTypeConverter().ConvertFrom(null);
 		}
 
 		[TestMethod]

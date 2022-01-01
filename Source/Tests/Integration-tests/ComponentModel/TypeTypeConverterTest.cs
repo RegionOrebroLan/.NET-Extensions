@@ -45,22 +45,14 @@ namespace RegionOrebroLan.IntegrationTests.ComponentModel
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public async Task Options_Bind_IfTypeIsAnEmptyString_ShouldThrowAnInvalidOperationException()
+		public async Task Options_Bind_IfTypeIsAnEmptyString_ShouldResultInTypeIsNull()
 		{
-			var configuration = await this.CreateConfigurationAsync("appsettings.Invalid").ConfigureAwait(false);
+			var configuration = await this.CreateConfigurationAsync("appsettings.Valid").ConfigureAwait(false);
 
 			var options = new TypeOptionsMock();
-
-			try
-			{
-				configuration.GetSection("TypeOptionsMock1").Bind(options);
-			}
-			catch(InvalidOperationException invalidOperationException)
-			{
-				if(string.Equals(invalidOperationException.Message, "Failed to convert '' to type 'System.Type'.", StringComparison.Ordinal))
-					throw;
-			}
+			Assert.IsNull(options.Type);
+			configuration.GetSection("TypeOptionsMock2").Bind(options);
+			Assert.IsNull(options.Type);
 		}
 
 		[TestMethod]
@@ -73,7 +65,7 @@ namespace RegionOrebroLan.IntegrationTests.ComponentModel
 
 			try
 			{
-				configuration.GetSection("TypeOptionsMock2").Bind(options);
+				configuration.GetSection("TypeOptionsMock1").Bind(options);
 			}
 			catch(InvalidOperationException invalidOperationException)
 			{
@@ -83,16 +75,27 @@ namespace RegionOrebroLan.IntegrationTests.ComponentModel
 		}
 
 		[TestMethod]
+		public async Task Options_Bind_IfTypeIsNull_ShouldResultInTypeIsNull()
+		{
+			var configuration = await this.CreateConfigurationAsync("appsettings.Valid").ConfigureAwait(false);
+
+			var options = new TypeOptionsMock();
+			Assert.IsNull(options.Type);
+			configuration.GetSection("TypeOptionsMock1").Bind(options);
+			Assert.IsNull(options.Type);
+		}
+
+		[TestMethod]
 		public async Task Options_Bind_Test()
 		{
 			var configuration = await this.CreateConfigurationAsync("appsettings.Valid").ConfigureAwait(false);
 
 			var options = new TypeOptionsMock();
-			configuration.GetSection("TypeOptionsMock1").Bind(options);
+			configuration.GetSection("TypeOptionsMock3").Bind(options);
 			Assert.AreEqual(typeof(string), options.Type);
 
 			options = new TypeOptionsMock();
-			configuration.GetSection("TypeOptionsMock2").Bind(options);
+			configuration.GetSection("TypeOptionsMock4").Bind(options);
 			Assert.AreEqual(this.GetType(), options.Type);
 		}
 
