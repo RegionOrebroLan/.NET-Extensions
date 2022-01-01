@@ -9,7 +9,7 @@ namespace RegionOrebroLan.ComponentModel
 		#region Properties
 
 		/// <summary>
-		/// Used when converting to. If false (default) and the type is string ConvertTo will return: System.String, System.Private.CoreLib. If true and the type is string ConvertTo will return: System.String, System.Private.CoreLib.
+		/// Used when converting to. If false (default) and the type is string, ConvertTo will return eg: "System.String, System.Private.CoreLib". If true and the type is string, ConvertTo will return eg: "System.String, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e".
 		/// </summary>
 		public virtual bool UseAssemblyQualifiedName { get; set; }
 
