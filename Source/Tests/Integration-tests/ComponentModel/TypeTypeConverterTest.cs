@@ -102,8 +102,6 @@ namespace RegionOrebroLan.IntegrationTests.ComponentModel
 			TypeDescriptor.RemoveProvider(_typeDescriptionProvider, typeof(Type));
 			TypeDescriptor.Refresh(typeof(Type));
 
-			//Thread.Sleep(2000);
-
 			var typeConverter = TypeDescriptor.GetConverter(typeof(Type));
 			Assert.AreEqual(typeof(TypeConverter), typeConverter.GetType());
 
