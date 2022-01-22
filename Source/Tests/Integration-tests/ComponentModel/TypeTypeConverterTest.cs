@@ -69,7 +69,7 @@ namespace RegionOrebroLan.IntegrationTests.ComponentModel
 			}
 			catch(InvalidOperationException invalidOperationException)
 			{
-				if(string.Equals(invalidOperationException.Message, "Failed to convert 'zzzz' to type 'System.Type'.", StringComparison.Ordinal))
+				if(string.Equals(invalidOperationException.Message, "Failed to convert configuration value at 'TypeOptionsMock1:Type' to type 'System.Type'.", StringComparison.Ordinal))
 					throw;
 			}
 		}
