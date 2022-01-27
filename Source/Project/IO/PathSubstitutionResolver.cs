@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using RegionOrebroLan.DependencyInjection;
 using RegionOrebroLan.Extensions;
@@ -28,11 +27,10 @@ namespace RegionOrebroLan.IO
 
 		#region Methods
 
-		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		public virtual async Task<string> ResolveDataDirectoryAsync(string path)
 		{
 			if(string.IsNullOrWhiteSpace(path))
-				return await Task.FromResult(path);
+				return path;
 
 			if(!path.StartsWith(PathSubstitutions.DataDirectory, this.Comparison))
 				return path;
@@ -42,9 +40,9 @@ namespace RegionOrebroLan.IO
 			if(dataDirectory == null)
 				throw new InvalidOperationException("The data-directory is not set for the application-domain.");
 
-			var slashCharacters = new[] {'/', '\\'};
+			var slashCharacters = new[] { '/', '\\' };
 
-			return dataDirectory.TrimEnd(slashCharacters) + '\\' + path.Substring(PathSubstitutions.DataDirectory.Length).TrimStart(slashCharacters);
+			return await Task.FromResult(dataDirectory.TrimEnd(slashCharacters) + '\\' + path.Substring(PathSubstitutions.DataDirectory.Length).TrimStart(slashCharacters)).ConfigureAwait(false);
 		}
 
 		#endregion

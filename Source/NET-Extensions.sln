@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29905.134
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Global", ".Global", "{11402557-CA24-4A83-BE7F-E88F242BAA07}"
 EndProject
@@ -44,6 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Signing", "Signing", "{169D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BD932090-BBDD-468D-990C-4425B779A1FD}"
 	ProjectSection(SolutionItems) = preProject
+		Tests\.editorconfig = Tests\.editorconfig
 		Tests\Directory.Build.props = Tests\Directory.Build.props
 		Tests\Directory.Build.targets = Tests\Directory.Build.targets
 	EndProjectSection
@@ -84,6 +85,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{43D62E8E-B7D9-4020-A5CA-3D94D999CD5A} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
+		{49372143-9CC0-4C70-82B7-8911BB839757} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
 		{E2B140BE-56E4-4D82-A011-E1D64F936198} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
 		{E3F474E2-0E85-47CD-A2DB-55852CEDB670} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
 		{E69917BB-D44E-418E-AE1E-8C62EE842E58} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
@@ -91,7 +93,6 @@ Global
 		{16598E18-E593-4C45-88FA-21A648D2A4A3} = {BD932090-BBDD-468D-990C-4425B779A1FD}
 		{3ED78059-9F54-4511-8A4F-D0DDF380EC0A} = {BD932090-BBDD-468D-990C-4425B779A1FD}
 		{C079270F-6D81-465C-B088-B792582A3E97} = {BD932090-BBDD-468D-990C-4425B779A1FD}
-		{49372143-9CC0-4C70-82B7-8911BB839757} = {11402557-CA24-4A83-BE7F-E88F242BAA07}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9D7A5EBB-83F7-4E96-9BFA-4FC6B4C3856E}
