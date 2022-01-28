@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
@@ -24,7 +24,7 @@ namespace RegionOrebroLan
 		public UriWrapper(Uri uri) : base(uri, nameof(uri)) { }
 
 		[SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-		protected UriWrapper(SerializationInfo info, StreamingContext context) : this((Uri) ValidateSerializationInfo(info).GetValue(_wrappedInstanceSerializationParameterName, typeof(Uri))) { }
+		protected UriWrapper(SerializationInfo info, StreamingContext context) : this((Uri)ValidateSerializationInfo(info).GetValue(_wrappedInstanceSerializationParameterName, typeof(Uri))) { }
 
 		#endregion
 
@@ -34,7 +34,7 @@ namespace RegionOrebroLan
 		public virtual string DnsSafeHost => this.IsAbsolute ? this.WrappedInstance.DnsSafeHost : null;
 		public virtual string Fragment => this.InternalAbsoluteUri.Fragment;
 		public virtual string Host => this.IsAbsolute ? this.WrappedInstance.Host : null;
-		public virtual UriHostNameType? HostNameType => this.IsAbsolute ? (UriHostNameType?) this.WrappedInstance.HostNameType : null;
+		public virtual UriHostNameType? HostNameType => this.IsAbsolute ? this.WrappedInstance.HostNameType : null;
 		public virtual string IdnHost => this.IsAbsolute ? this.WrappedInstance.IdnHost : null;
 		protected internal virtual string InternalAbsoluteHost => _internalAbsoluteHost;
 		protected internal virtual string InternalAbsoluteScheme => _internalAbsoluteScheme;
@@ -59,7 +59,7 @@ namespace RegionOrebroLan
 		public virtual string OriginalString => this.WrappedInstance.OriginalString;
 		public virtual string Path => this.InternalAbsoluteUri.AbsolutePath;
 		public virtual string PathAndQuery => this.InternalAbsoluteUri.PathAndQuery;
-		public virtual int? Port => !this.IsAbsolute || this.WrappedInstance.Port == this.PortNullValue ? null : (int?) this.WrappedInstance.Port;
+		public virtual int? Port => !this.IsAbsolute || this.WrappedInstance.Port == this.PortNullValue ? null : this.WrappedInstance.Port;
 		protected internal virtual int PortNullValue => _portNullValue;
 		public virtual string Query => this.InternalAbsoluteUri.Query;
 		public virtual string Scheme => this.IsAbsolute ? this.WrappedInstance.Scheme : null;
@@ -127,7 +127,7 @@ namespace RegionOrebroLan
 			// ReSharper disable InvertIf
 			if(!string.IsNullOrWhiteSpace(uniformResourceIdentifier))
 			{
-				foreach(var value in new[] {this.InternalAbsoluteScheme, Uri.SchemeDelimiter, this.InternalAbsoluteHost})
+				foreach(var value in new[] { this.InternalAbsoluteScheme, Uri.SchemeDelimiter, this.InternalAbsoluteHost })
 				{
 					if(uniformResourceIdentifier.StartsWith(value, StringComparison.Ordinal))
 						uniformResourceIdentifier = uniformResourceIdentifier.Substring(value.Length);
