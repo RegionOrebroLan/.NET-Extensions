@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -22,13 +22,13 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		[TestMethod]
 		public void Clone_ShouldReturnANodeWithAParentThatIsNull()
 		{
-			Assert.IsNull(new TreeNode<object> {Parent = new TreeNode<object>()}.Clone().Parent);
+			Assert.IsNull(new TreeNode<object> { Parent = new TreeNode<object>() }.Clone().Parent);
 		}
 
 		[TestMethod]
 		public void Clone_ShouldReturnAWritableNode()
 		{
-			Assert.IsFalse(new TreeNode<object> {IsReadOnly = true}.Clone().IsReadOnly);
+			Assert.IsFalse(new TreeNode<object> { IsReadOnly = true }.Clone().IsReadOnly);
 		}
 
 		[TestMethod]
@@ -77,7 +77,7 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		{
 			try
 			{
-				new TreeNode<object> {IsReadOnly = true}.Parent = null;
+				new TreeNode<object> { IsReadOnly = true }.Parent = null;
 			}
 			catch(InvalidOperationException invalidOperationException)
 			{
@@ -106,7 +106,7 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		[TestMethod]
 		public void Parent_Set_ShouldAllowNull()
 		{
-			Assert.IsNull(new TreeNode<object> {Parent = null}.Parent);
+			Assert.IsNull(new TreeNode<object> { Parent = null }.Parent);
 		}
 
 		[TestMethod]
@@ -114,7 +114,7 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		{
 			var parent = new TreeNode<object>();
 
-			Assert.AreEqual(parent, new TreeNode<object> {Parent = parent}.Parent);
+			Assert.AreEqual(parent, new TreeNode<object> { Parent = parent }.Parent);
 		}
 
 		[TestMethod]
@@ -123,7 +123,7 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		{
 			try
 			{
-				new TreeNode<object> {IsReadOnly = true}.SetParent(null, false);
+				new TreeNode<object> { IsReadOnly = true }.SetParent(null, false);
 			}
 			catch(InvalidOperationException invalidOperationException)
 			{
@@ -144,7 +144,7 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		{
 			try
 			{
-				new TreeNode<object> {IsReadOnly = true}.Value = null;
+				new TreeNode<object> { IsReadOnly = true }.Value = null;
 			}
 			catch(InvalidOperationException invalidOperationException)
 			{
@@ -156,22 +156,22 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		[TestMethod]
 		public void Value_Set_ShouldAllowNull()
 		{
-			Assert.IsNull(new TreeNode<object> {Value = null}.Value);
+			Assert.IsNull(new TreeNode<object> { Value = null }.Value);
 		}
 
 		[TestMethod]
 		public void Value_Set_ShouldSetTheValueProperty()
 		{
 			const int number = 7;
-			Assert.AreEqual(number, new TreeNode<object> {Value = number}.Value);
-			Assert.AreEqual(number, new TreeNode<int> {Value = number}.Value);
+			Assert.AreEqual(number, new TreeNode<object> { Value = number }.Value);
+			Assert.AreEqual(number, new TreeNode<int> { Value = number }.Value);
 
 			const string text = "Test";
-			Assert.AreEqual(text, new TreeNode<object> {Value = text}.Value);
-			Assert.AreEqual(text, new TreeNode<string> {Value = text}.Value);
+			Assert.AreEqual(text, new TreeNode<object> { Value = text }.Value);
+			Assert.AreEqual(text, new TreeNode<string> { Value = text }.Value);
 
-			object value = new object();
-			Assert.AreEqual(value, new TreeNode<object> {Value = value}.Value);
+			var value = new object();
+			Assert.AreEqual(value, new TreeNode<object> { Value = value }.Value);
 		}
 
 		#endregion
