@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,7 +19,7 @@ namespace RegionOrebroLan.UnitTests.Security.Cryptography.Validation
 		{
 			try
 			{
-				_ = new CertificateValidator().ValidateAsync((X509Certificate2) null, Mock.Of<CertificateValidatorOptions>()).Result;
+				_ = new CertificateValidator().ValidateAsync((X509Certificate2)null, Mock.Of<CertificateValidatorOptions>()).Result;
 			}
 			catch(AggregateException aggregateException)
 			{
@@ -34,7 +33,6 @@ namespace RegionOrebroLan.UnitTests.Security.Cryptography.Validation
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentNullException))]
-		[SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code")]
 		public void ValidateAsync_IfTheOptionsParameterIsNull_ShouldThrowAnArgumentNullException()
 		{
 			// ReSharper disable ConvertToUsingDeclaration
