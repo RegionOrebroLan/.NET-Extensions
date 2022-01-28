@@ -22,7 +22,7 @@ namespace RegionOrebroLan.Security.Claims
 
 		public virtual Func<string, bool> ValueIsEmptyFunction
 		{
-			get => this._valueIsEmptyFunction ?? (this._valueIsEmptyFunction = string.IsNullOrWhiteSpace);
+			get => this._valueIsEmptyFunction ??= string.IsNullOrWhiteSpace;
 			set => this._valueIsEmptyFunction = value;
 		}
 

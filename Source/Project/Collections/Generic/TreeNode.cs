@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace RegionOrebroLan.Collections.Generic
@@ -18,7 +18,7 @@ namespace RegionOrebroLan.Collections.Generic
 
 		protected internal virtual ITreeNodeSet<T> ChildrenInternal
 		{
-			get => this._childrenInternal ?? (this._childrenInternal = new TreeNodeSet<T>(this));
+			get => this._childrenInternal ??= new TreeNodeSet<T>(this);
 			set => this._childrenInternal = value;
 		}
 
@@ -55,7 +55,7 @@ namespace RegionOrebroLan.Collections.Generic
 
 		public virtual TreeNode<T> Clone()
 		{
-			var clone = (TreeNode<T>) this.MemberwiseClone();
+			var clone = (TreeNode<T>)this.MemberwiseClone();
 
 			clone.IsReadOnly = false;
 
@@ -75,7 +75,7 @@ namespace RegionOrebroLan.Collections.Generic
 		{
 			try
 			{
-				return (ITreeNodeSetInternal<T>) nodeSet;
+				return (ITreeNodeSetInternal<T>)nodeSet;
 			}
 			catch(InvalidCastException invalidCastException)
 			{
