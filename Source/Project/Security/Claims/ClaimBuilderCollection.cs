@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Claims;
 
@@ -30,7 +29,6 @@ namespace RegionOrebroLan.Security.Claims
 
 		#region Methods
 
-		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		public virtual IList<Claim> Build()
 		{
 			try

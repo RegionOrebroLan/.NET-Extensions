@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace RegionOrebroLan.UnitTests
@@ -50,12 +49,9 @@ namespace RegionOrebroLan.UnitTests
 
 		[TestMethod]
 		[ExpectedException(typeof(InvalidOperationException))]
-		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
 		public void Constructor_WithUriParameter_IfTheUriParameterIsARelativeUri_ShouldThrowAnInvalidOperationException()
 		{
-			// ReSharper disable ObjectCreationAsStatement
-			new UriBuilder(new Uri("/", UriKind.Relative));
-			// ReSharper restore ObjectCreationAsStatement
+			var _ = new UriBuilder(new Uri("/", UriKind.Relative));
 		}
 
 		[TestMethod]
@@ -162,12 +158,9 @@ namespace RegionOrebroLan.UnitTests
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentException))]
-		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
 		public void Scheme_Set_IfTheValueIsAWhiteSpace_ShouldThrowAnArgumentException()
 		{
-			// ReSharper disable ObjectCreationAsStatement
-			new UriBuilder { Scheme = " " };
-			// ReSharper restore ObjectCreationAsStatement
+			var _ = new UriBuilder { Scheme = " " };
 		}
 
 		[TestMethod]

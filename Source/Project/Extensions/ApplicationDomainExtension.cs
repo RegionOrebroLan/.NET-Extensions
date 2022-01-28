@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using RegionOrebroLan.Abstractions;
 
 namespace RegionOrebroLan.Extensions
@@ -8,8 +7,6 @@ namespace RegionOrebroLan.Extensions
 	{
 		#region Methods
 
-		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
-		[SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code")]
 		public static string GetDataDirectory(this IApplicationDomain applicationDomain, bool validate = true)
 		{
 			if(applicationDomain == null)

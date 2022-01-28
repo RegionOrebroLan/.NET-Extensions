@@ -1,13 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RegionOrebroLan.Collections.Generic
 {
 	/// <inheritdoc cref="ITreeNodeSet{T}" />
-	[SuppressMessage("Naming", "CA1710:Identifiers should have correct suffix")]
 	public class TreeNodeSet<T> : IReadOnly<TreeNodeSet<T>>, ITreeNodeSet<T>, ITreeNodeSetInternal<T>
 	{
 		#region Constructors
@@ -265,7 +263,6 @@ namespace RegionOrebroLan.Collections.Generic
 			}
 		}
 
-		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		protected internal virtual void ThrowExistingIndexOutOfRangeException(int index)
 		{
 			this.ThrowIndexOutOfRangeException(index, "Index is out of range. The index must be non-negative and less than the size of the set.");
@@ -276,13 +273,11 @@ namespace RegionOrebroLan.Collections.Generic
 			throw new ArgumentOutOfRangeException(nameof(index), $"The index-value is \"{index}\". " + message);
 		}
 
-		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		protected internal virtual void ThrowInsertIndexOutOfRangeException(int index)
 		{
 			this.ThrowIndexOutOfRangeException(index, "Index must be within the bounds of the set.");
 		}
 
-		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		protected internal virtual void ThrowReadOnlyException()
 		{
 			throw new InvalidOperationException("The set is read-only.");

@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace RegionOrebroLan.Collections.Generic
 {
@@ -115,7 +114,6 @@ namespace RegionOrebroLan.Collections.Generic
 			this.GetTreeNodeSetInternal(previousParent.Children).Remove(this, false);
 		}
 
-		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		public virtual void SetParent(ITreeNode<T> parent, bool resolveChildren)
 		{
 			// Ideas: https://github.com/SharePoint/PnP-Sites-Core/blob/master/Core/OfficeDevPnP.Core/Diagnostics/Tree/TreeNode.cs#L71
@@ -135,7 +133,6 @@ namespace RegionOrebroLan.Collections.Generic
 			this.ResolveNewParent(this.ParentInternal, resolveChildren);
 		}
 
-		[SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters")]
 		protected internal virtual void ThrowReadOnlyException()
 		{
 			throw new InvalidOperationException("The node is read-only.");

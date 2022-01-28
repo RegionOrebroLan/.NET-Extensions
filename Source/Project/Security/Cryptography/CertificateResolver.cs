@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using RegionOrebroLan.DependencyInjection;
 using RegionOrebroLan.Security.Cryptography.Configuration;
@@ -33,7 +32,6 @@ namespace RegionOrebroLan.Security.Cryptography
 
 		#region Methods
 
-		[SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "It is validated.")]
 		public virtual async Task<ICertificate> ResolveAsync(ResolverOptions options)
 		{
 			return options switch

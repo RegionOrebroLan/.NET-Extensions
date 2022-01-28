@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace RegionOrebroLan.UnitTests
@@ -27,12 +26,9 @@ namespace RegionOrebroLan.UnitTests
 
 		[TestMethod]
 		[ExpectedException(typeof(UriFormatException))]
-		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
 		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsABackSlashAndTheUriKindParameterIsAbsolute_ShouldThrowAnUriFormatException()
 		{
-			// ReSharper disable ObjectCreationAsStatement
-			new Uri(@"\", UriKind.Absolute);
-			// ReSharper restore ObjectCreationAsStatement
+			var _ = new Uri(@"\", UriKind.Absolute);
 		}
 
 		[TestMethod]
@@ -55,12 +51,9 @@ namespace RegionOrebroLan.UnitTests
 
 		[TestMethod]
 		[ExpectedException(typeof(UriFormatException))]
-		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
 		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsAnEmptyStringAndTheUriKindParameterIsAbsolute_ShouldThrowAnUriFormatException()
 		{
-			// ReSharper disable ObjectCreationAsStatement
-			new Uri(string.Empty, UriKind.Absolute);
-			// ReSharper restore ObjectCreationAsStatement
+			var _ = new Uri(string.Empty, UriKind.Absolute);
 		}
 
 		[TestMethod]
@@ -83,12 +76,9 @@ namespace RegionOrebroLan.UnitTests
 
 		[TestMethod]
 		[ExpectedException(typeof(UriFormatException))]
-		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
 		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsASlashAndTheUriKindParameterIsAbsolute_ShouldThrowAnUriFormatException()
 		{
-			// ReSharper disable ObjectCreationAsStatement
-			new Uri("/", UriKind.Absolute);
-			// ReSharper restore ObjectCreationAsStatement
+			var _ = new Uri("/", UriKind.Absolute);
 		}
 
 		[TestMethod]
@@ -111,32 +101,23 @@ namespace RegionOrebroLan.UnitTests
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentNullException))]
-		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
 		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsNullAndTheUriKindParameterIsAbsolute_ShouldThrowAnArgumentNullException()
 		{
-			// ReSharper disable ObjectCreationAsStatement
-			new Uri(null, UriKind.Absolute);
-			// ReSharper restore ObjectCreationAsStatement
+			var _ = new Uri(null, UriKind.Absolute);
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentNullException))]
-		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
 		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsNullAndTheUriKindParameterIsRelative_ShouldThrowAnArgumentNullException()
 		{
-			// ReSharper disable ObjectCreationAsStatement
-			new Uri(null, UriKind.Relative);
-			// ReSharper restore ObjectCreationAsStatement
+			var _ = new Uri(null, UriKind.Relative);
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentNullException))]
-		[SuppressMessage("Usage", "CA1806:Do not ignore method results")]
 		public void Constructor_WithStringAndUriKindParameters_IfTheStringParameterIsNullAndTheUriKindParameterIsRelativeOrAbsolute_ShouldThrowAnArgumentNullException()
 		{
-			// ReSharper disable ObjectCreationAsStatement
-			new Uri(null, UriKind.RelativeOrAbsolute);
-			// ReSharper restore ObjectCreationAsStatement
+			var _ = new Uri(null, UriKind.RelativeOrAbsolute);
 		}
 
 		[TestMethod]

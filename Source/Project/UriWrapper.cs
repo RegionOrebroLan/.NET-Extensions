@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using RegionOrebroLan.Abstractions;
 
@@ -22,8 +21,6 @@ namespace RegionOrebroLan
 		#region Constructors
 
 		public UriWrapper(Uri uri) : base(uri, nameof(uri)) { }
-
-		[SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
 		protected UriWrapper(SerializationInfo info, StreamingContext context) : this((Uri)ValidateSerializationInfo(info).GetValue(_wrappedInstanceSerializationParameterName, typeof(Uri))) { }
 
 		#endregion
@@ -113,7 +110,6 @@ namespace RegionOrebroLan
 			return !string.IsNullOrEmpty(relativeComponents) ? relativeComponents : null;
 		}
 
-		[SuppressMessage("Style", "IDE0046:Convert to conditional expression")]
 		protected internal virtual string GetRelativeLeftPart(UriPartial part)
 		{
 			if(part is UriPartial.Authority or UriPartial.Scheme)

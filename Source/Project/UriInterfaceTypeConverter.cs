@@ -22,8 +22,7 @@ namespace RegionOrebroLan
 			return destinationType == typeof(string) || destinationType == typeof(Uri) || destinationType == typeof(UriWrapper);
 		}
 
-		[SuppressMessage("Style", "IDE0010:Convert to conditional expression")]
-		[SuppressMessage("Style", "IDE0046:Convert to conditional expression")]
+		[SuppressMessage("Style", "IDE0010:Add missing cases to switch statement")]
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			string uniformResourceIdentifier = null;
@@ -76,7 +75,6 @@ namespace RegionOrebroLan
 			throw this.GetConvertToException(value, destinationType);
 		}
 
-		[SuppressMessage("Style", "IDE0046:Convert to conditional expression")]
 		public override bool IsValid(ITypeDescriptorContext context, object value)
 		{
 			if(value is string uniformResourceIdentifier)
