@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -93,10 +93,10 @@ namespace RegionOrebroLan.Collections.Generic
 
 			foreach(var node in this)
 			{
-				if(!(node is IReadOnly readOnly))
+				if(node is not IReadOnly readOnly)
 					continue;
 
-				clone.Add((ITreeNode<T>) readOnly.Clone());
+				clone.Add((ITreeNode<T>)readOnly.Clone());
 			}
 
 			return clone;
@@ -127,7 +127,7 @@ namespace RegionOrebroLan.Collections.Generic
 			try
 			{
 				// ReSharper disable SuspiciousTypeConversion.Global
-				return (ITreeNodeInternal<T>) node;
+				return (ITreeNodeInternal<T>)node;
 				// ReSharper restore SuspiciousTypeConversion.Global
 			}
 			catch(InvalidCastException invalidCastException)
@@ -246,7 +246,7 @@ namespace RegionOrebroLan.Collections.Generic
 
 			var clearAndAdd = false;
 
-			if(!(this.Items is List<ITreeNode<T>> list))
+			if(this.Items is not List<ITreeNode<T>> list)
 			{
 				clearAndAdd = true;
 				list = this.Items.ToList();

@@ -116,7 +116,7 @@ namespace RegionOrebroLan
 		[SuppressMessage("Style", "IDE0046:Convert to conditional expression")]
 		protected internal virtual string GetRelativeLeftPart(UriPartial part)
 		{
-			if(part == UriPartial.Authority || part == UriPartial.Scheme)
+			if(part is UriPartial.Authority or UriPartial.Scheme)
 				return null;
 
 			return this.GetRelativeResult(this.InternalAbsoluteUri.GetLeftPart(part));

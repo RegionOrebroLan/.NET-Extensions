@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -82,7 +82,7 @@ namespace RegionOrebroLan
 			if(value is string uniformResourceIdentifier)
 				return Uri.TryCreate(uniformResourceIdentifier, UriKind.RelativeOrAbsolute, out _);
 
-			return value is IUri || value is Uri;
+			return value is IUri or Uri;
 		}
 
 		#endregion

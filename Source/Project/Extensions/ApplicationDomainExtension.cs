@@ -15,7 +15,7 @@ namespace RegionOrebroLan.Extensions
 			if(applicationDomain == null)
 				throw new ArgumentNullException(nameof(applicationDomain));
 
-			if(!(applicationDomain is IWrapper<AppDomain> appDomainWrapper))
+			if(applicationDomain is not IWrapper<AppDomain> appDomainWrapper)
 				throw new InvalidOperationException($"This method only supports {nameof(IApplicationDomain)}-instances implementing {nameof(IWrapper<AppDomain>)}.");
 
 			return appDomainWrapper.WrappedInstance.GetDataDirectory(validate);
