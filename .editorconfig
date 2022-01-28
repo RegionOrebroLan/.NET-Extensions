@@ -538,9 +538,6 @@ dotnet_diagnostic.RS1025.severity = error
 dotnet_diagnostic.RS1026.severity = error
 
 # Temporary to fix later
-
-dotnet_diagnostic.CA1847.severity = none
-
 dotnet_diagnostic.IDE0004.severity = none
 dotnet_diagnostic.IDE0007.severity = none
 dotnet_diagnostic.IDE0059.severity = none

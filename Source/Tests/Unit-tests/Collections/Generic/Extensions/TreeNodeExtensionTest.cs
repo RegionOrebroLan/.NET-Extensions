@@ -142,11 +142,11 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic.Extensions
 
 			Assert.AreEqual("5.5.5.5.5", root.Descendants().Last().Value);
 
-			Assert.IsFalse(root.Descendants().Any(node => node.Value.Contains("0")));
-			Assert.IsFalse(root.Descendants().Any(node => node.Value.Contains("6")));
-			Assert.IsFalse(root.Descendants().Any(node => node.Value.Contains("7")));
-			Assert.IsFalse(root.Descendants().Any(node => node.Value.Contains("8")));
-			Assert.IsFalse(root.Descendants().Any(node => node.Value.Contains("9")));
+			Assert.IsFalse(root.Descendants().Any(node => node.Value.Contains('0')));
+			Assert.IsFalse(root.Descendants().Any(node => node.Value.Contains('6')));
+			Assert.IsFalse(root.Descendants().Any(node => node.Value.Contains('7')));
+			Assert.IsFalse(root.Descendants().Any(node => node.Value.Contains('8')));
+			Assert.IsFalse(root.Descendants().Any(node => node.Value.Contains('9')));
 
 			Assert.AreEqual(9, root.Descendants().Select(node => node.Value.Length).Max());
 
