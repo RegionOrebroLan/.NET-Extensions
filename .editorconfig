@@ -537,7 +537,14 @@ dotnet_diagnostic.RS1024.severity = error
 dotnet_diagnostic.RS1025.severity = error
 dotnet_diagnostic.RS1026.severity = error
 
-# Temporary to handle the following issues:
-# https://github.com/dotnet/roslyn/issues/55014
-# https://github.com/edumserrano/dot-net-sdk-extensions/issues/73
-dotnet_diagnostic.IDE0130.severity = none
+# Temporary to fix later
+
+dotnet_diagnostic.CA1847.severity = none
+
+dotnet_diagnostic.IDE0004.severity = none
+dotnet_diagnostic.IDE0007.severity = none
+dotnet_diagnostic.IDE0059.severity = none
+dotnet_diagnostic.IDE0066.severity = none
+dotnet_diagnostic.IDE0074.severity = none
+dotnet_diagnostic.IDE0078.severity = none
+dotnet_diagnostic.IDE0083.severity = none
