@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -79,19 +79,19 @@ namespace RegionOrebroLan.UnitTests
 		[TestMethod]
 		public void Host_Get_IfTheHostIsSetToAnEmptyString_ShouldReturnAWhiteSpace()
 		{
-			Assert.AreEqual(string.Empty, new UriBuilder {Host = string.Empty}.Host);
+			Assert.AreEqual(string.Empty, new UriBuilder { Host = string.Empty }.Host);
 		}
 
 		[TestMethod]
 		public void Host_Get_IfTheHostIsSetToAWhiteSpace_ShouldReturnAWhiteSpace()
 		{
-			Assert.AreEqual(" ", new UriBuilder {Host = " "}.Host);
+			Assert.AreEqual(" ", new UriBuilder { Host = " " }.Host);
 		}
 
 		[TestMethod]
 		public void Host_Get_IfTheHostIsSetToNull_ShouldReturnAnEmptyString()
 		{
-			Assert.AreEqual(string.Empty, new UriBuilder {Host = null}.Host);
+			Assert.AreEqual(string.Empty, new UriBuilder { Host = null }.Host);
 		}
 
 		[TestMethod]
@@ -103,19 +103,19 @@ namespace RegionOrebroLan.UnitTests
 		[TestMethod]
 		public void Password_Get_IfThePasswordIsSetToAnEmptyString_ShouldReturnAnEmptyString()
 		{
-			Assert.AreEqual(string.Empty, new UriBuilder {Password = string.Empty}.Password);
+			Assert.AreEqual(string.Empty, new UriBuilder { Password = string.Empty }.Password);
 		}
 
 		[TestMethod]
 		public void Password_Get_IfThePasswordIsSetToAWhiteSpace_ShouldReturnAWhiteSpace()
 		{
-			Assert.AreEqual(" ", new UriBuilder {Password = " "}.Password);
+			Assert.AreEqual(" ", new UriBuilder { Password = " " }.Password);
 		}
 
 		[TestMethod]
 		public void Password_Get_IfThePasswordIsSetToNull_ShouldReturnAnEmptyString()
 		{
-			Assert.AreEqual(string.Empty, new UriBuilder {Password = null}.Password);
+			Assert.AreEqual(string.Empty, new UriBuilder { Password = null }.Password);
 		}
 
 		[TestMethod]
@@ -145,13 +145,13 @@ namespace RegionOrebroLan.UnitTests
 		[TestMethod]
 		public void Scheme_Get_IfTheSchemeIsSetToAnEmptyString_ShouldReturnAnEmptyString()
 		{
-			Assert.AreEqual(string.Empty, new UriBuilder {Scheme = string.Empty}.Scheme);
+			Assert.AreEqual(string.Empty, new UriBuilder { Scheme = string.Empty }.Scheme);
 		}
 
 		[TestMethod]
 		public void Scheme_Get_IfTheSchemeIsSetToNull_ShouldReturnAnEmptyString()
 		{
-			Assert.AreEqual(string.Empty, new UriBuilder {Scheme = null}.Scheme);
+			Assert.AreEqual(string.Empty, new UriBuilder { Scheme = null }.Scheme);
 		}
 
 		[TestMethod]
@@ -166,7 +166,7 @@ namespace RegionOrebroLan.UnitTests
 		public void Scheme_Set_IfTheValueIsAWhiteSpace_ShouldThrowAnArgumentException()
 		{
 			// ReSharper disable ObjectCreationAsStatement
-			new UriBuilder {Scheme = " "};
+			new UriBuilder { Scheme = " " };
 			// ReSharper restore ObjectCreationAsStatement
 		}
 
@@ -179,58 +179,56 @@ namespace RegionOrebroLan.UnitTests
 		[TestMethod]
 		public void Uri_IfThePasswordIsSetToAnEmptyString_ShouldReturnAnUriWithoutThePassword()
 		{
-			Assert.AreEqual("http://localhost/", new UriBuilder {Password = string.Empty}.Uri.OriginalString);
+			Assert.AreEqual("http://localhost/", new UriBuilder { Password = string.Empty }.Uri.OriginalString);
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(UriFormatException))]
 		public void Uri_IfThePasswordIsSetToAWhiteSpaceWithoutSettingTheUserName_ShouldThrowAnUriFormatException()
 		{
-			// ReSharper disable UnusedVariable
-			var uri = new UriBuilder {Password = " "}.Uri;
-			// ReSharper restore UnusedVariable
+			var _ = new UriBuilder { Password = " " }.Uri;
 		}
 
 		[TestMethod]
 		public void Uri_IfThePasswordIsSetToNull_ShouldReturnAnUriWithoutThePassword()
 		{
-			Assert.AreEqual("http://localhost/", new UriBuilder {Password = null}.Uri.OriginalString);
+			Assert.AreEqual("http://localhost/", new UriBuilder { Password = null }.Uri.OriginalString);
 		}
 
 		[TestMethod]
 		public void Uri_IfTheUserNameIsSetToAnEmptyString_ShouldReturnAnUriWithoutTheUserName()
 		{
-			Assert.AreEqual("http://localhost/", new UriBuilder {UserName = string.Empty}.Uri.OriginalString);
+			Assert.AreEqual("http://localhost/", new UriBuilder { UserName = string.Empty }.Uri.OriginalString);
 		}
 
 		[TestMethod]
 		public void Uri_IfTheUserNameIsSetToAWhiteSpace_ShouldReturnAnUriWithTheUserNameIncluded()
 		{
-			Assert.AreEqual("http:// @localhost/", new UriBuilder {UserName = " "}.Uri.OriginalString);
+			Assert.AreEqual("http:// @localhost/", new UriBuilder { UserName = " " }.Uri.OriginalString);
 		}
 
 		[TestMethod]
 		public void Uri_IfTheUserNameIsSetToNull_ShouldReturnAnUriWithoutTheUserName()
 		{
-			Assert.AreEqual("http://localhost/", new UriBuilder {UserName = null}.Uri.OriginalString);
+			Assert.AreEqual("http://localhost/", new UriBuilder { UserName = null }.Uri.OriginalString);
 		}
 
 		[TestMethod]
 		public void UserName_Get_IfTheUserNameIsSetToAnEmptyString_ShouldReturnAnEmptyString()
 		{
-			Assert.AreEqual(string.Empty, new UriBuilder {UserName = string.Empty}.UserName);
+			Assert.AreEqual(string.Empty, new UriBuilder { UserName = string.Empty }.UserName);
 		}
 
 		[TestMethod]
 		public void UserName_Get_IfTheUserNameIsSetToAWhiteSpace_ShouldReturnAWhiteSpace()
 		{
-			Assert.AreEqual(" ", new UriBuilder {UserName = " "}.UserName);
+			Assert.AreEqual(" ", new UriBuilder { UserName = " " }.UserName);
 		}
 
 		[TestMethod]
 		public void UserName_Get_IfTheUserNameIsSetToNull_ShouldReturnAnEmptyString()
 		{
-			Assert.AreEqual(string.Empty, new UriBuilder {UserName = null}.UserName);
+			Assert.AreEqual(string.Empty, new UriBuilder { UserName = null }.UserName);
 		}
 
 		[TestMethod]

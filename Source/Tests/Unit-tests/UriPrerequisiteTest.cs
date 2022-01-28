@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -21,9 +21,8 @@ namespace RegionOrebroLan.UnitTests
 		public void AbsolutePath_IfTheUriIsRelative_ShouldThrowAnInvalidOperationException()
 		{
 			var relativeUri = new Uri("/Directory/Sub-Directory/File.txt?Key=Value#Our-fragment", UriKind.Relative);
-			// ReSharper disable UnusedVariable
-			var absolutePath = relativeUri.AbsolutePath;
-			// ReSharper restore UnusedVariable
+
+			var _ = relativeUri.AbsolutePath;
 		}
 
 		[TestMethod]
@@ -145,9 +144,8 @@ namespace RegionOrebroLan.UnitTests
 		public void GetComponents_IfTheUriIsRelative_ShouldThrowAnInvalidOperationException()
 		{
 			var relativeUri = new Uri("/Directory/Sub-Directory/File.txt?Key=Value#Our-fragment", UriKind.Relative);
-			// ReSharper disable UnusedVariable
-			var components = relativeUri.GetComponents(UriComponents.AbsoluteUri, UriFormat.Unescaped);
-			// ReSharper restore UnusedVariable
+
+			var _ = relativeUri.GetComponents(UriComponents.AbsoluteUri, UriFormat.Unescaped);
 		}
 
 		[TestMethod]
@@ -155,9 +153,8 @@ namespace RegionOrebroLan.UnitTests
 		public void GetLeftPart_IfTheUriIsRelative_ShouldThrowAnInvalidOperationException()
 		{
 			var relativeUri = new Uri("/Directory/Sub-Directory/File.txt", UriKind.Relative);
-			// ReSharper disable UnusedVariable
-			var leftPart = relativeUri.GetLeftPart(UriPartial.Path);
-			// ReSharper restore UnusedVariable
+
+			var _ = relativeUri.GetLeftPart(UriPartial.Path);
 		}
 
 		[TestMethod]

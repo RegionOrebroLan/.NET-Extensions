@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -64,7 +64,7 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 				exceptionMessages.Add("RemoveAt: " + exception);
 			}
 
-			var toLookAt = string.Join(Environment.NewLine + Environment.NewLine, exceptionMessages);
+			var _ = string.Join(Environment.NewLine + Environment.NewLine, exceptionMessages);
 
 			Assert.AreEqual(3, exceptionMessages.Count);
 		}
@@ -74,7 +74,7 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		public void List_Insert_IfTheIndexParameterIsLargerThanTheListSize_ShouldThrowAnArgumentOutOfRangeExcepton()
 		{
 			// ReSharper disable CollectionNeverQueried.Local
-			var list = new List<int> {1, 2, 3};
+			var list = new List<int> { 1, 2, 3 };
 			// ReSharper restore CollectionNeverQueried.Local
 
 			list.Insert(-4, 4);
@@ -83,7 +83,7 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		[TestMethod]
 		public void List_Insert_IfTheIndexParameterIsTheSameAsTheListSize_ShouldInsertTheItemLast()
 		{
-			var list = new List<int> {1, 2, 3};
+			var list = new List<int> { 1, 2, 3 };
 
 			list.Insert(3, 4);
 
@@ -94,11 +94,9 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void List_Item_Get_IfTheIndexIsOutOfRange_ShouldThrowAnArgumentOutOfRangeExcepton()
 		{
-			var list = new List<int> {1, 2, 3};
+			var list = new List<int> { 1, 2, 3 };
 
-			// ReSharper disable UnusedVariable
-			var item = list[3];
-			// ReSharper restore UnusedVariable
+			var _ = list[3];
 		}
 
 		[TestMethod]
@@ -139,21 +137,21 @@ namespace RegionOrebroLan.UnitTests.Collections.Generic
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void List_RemoveAt_IfTheIndexParameterIsLargerThanTheListSize_ShouldThrowAnArgumentOutOfRangeExcepton()
 		{
-			new List<int> {1, 2, 3}.RemoveAt(4);
+			new List<int> { 1, 2, 3 }.RemoveAt(4);
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void List_RemoveAt_IfTheIndexParameterIsMinusOne_ShouldThrowAnArgumentOutOfRangeExcepton()
 		{
-			new List<int> {1, 2, 3}.RemoveAt(-1);
+			new List<int> { 1, 2, 3 }.RemoveAt(-1);
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void List_RemoveAt_IfTheIndexParameterIsTheSameAsTheListSize_ShouldThrowAnArgumentOutOfRangeExcepton()
 		{
-			new List<int> {1, 2, 3}.RemoveAt(3);
+			new List<int> { 1, 2, 3 }.RemoveAt(3);
 		}
 
 		[TestMethod]
