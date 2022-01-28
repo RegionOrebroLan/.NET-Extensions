@@ -36,17 +36,13 @@ namespace RegionOrebroLan.Security.Cryptography
 		[SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "It is validated.")]
 		public virtual async Task<ICertificate> ResolveAsync(ResolverOptions options)
 		{
-			switch(options)
+			return options switch
 			{
-				case null:
-					throw new ArgumentNullException(nameof(options));
-				case FileResolverOptions fileResolverOptions:
-					return await this.ResolveAsync(fileResolverOptions).ConfigureAwait(false);
-				case StoreResolverOptions storeResolverOptions:
-					return await this.ResolveAsync(storeResolverOptions).ConfigureAwait(false);
-				default:
-					throw new NotImplementedException($"Resolving certificates with options of type \"{options.GetType()}\" is not implemented.");
-			}
+				null => throw new ArgumentNullException(nameof(options)),
+				FileResolverOptions fileResolverOptions => await this.ResolveAsync(fileResolverOptions).ConfigureAwait(false),
+				StoreResolverOptions storeResolverOptions => await this.ResolveAsync(storeResolverOptions).ConfigureAwait(false),
+				_ => throw new NotImplementedException($"Resolving certificates with options of type \"{options.GetType()}\" is not implemented.")
+			};
 		}
 
 		protected internal virtual async Task<ICertificate> ResolveAsync(FileResolverOptions options)
